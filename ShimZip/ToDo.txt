@@ -1,0 +1,5 @@
+﻿1. 디렉토리 -> szip
+2. szip -> memory structure
+3. memory structure -> Extract
+4. 암호화
+5. 압축
