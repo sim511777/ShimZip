@@ -30,10 +30,9 @@
          this.dlgFolder = new System.Windows.Forms.FolderBrowserDialog();
          this.dlgSave = new System.Windows.Forms.SaveFileDialog();
          this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
-         this.treeView1 = new System.Windows.Forms.TreeView();
+         this.trvZip = new System.Windows.Forms.TreeView();
          this.splitter1 = new System.Windows.Forms.Splitter();
-         this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-         this.listView1 = new System.Windows.Forms.ListView();
+         this.lvwFiles = new System.Windows.Forms.ListView();
          this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -48,7 +47,7 @@
             this.extractToolStripMenuItem});
          this.menuStrip1.Location = new System.Drawing.Point(0, 0);
          this.menuStrip1.Name = "menuStrip1";
-         this.menuStrip1.Size = new System.Drawing.Size(886, 24);
+         this.menuStrip1.Size = new System.Drawing.Size(855, 24);
          this.menuStrip1.TabIndex = 0;
          this.menuStrip1.Text = "menuStrip1";
          // 
@@ -79,35 +78,38 @@
          // 
          this.dlgOpen.FileName = "openFileDialog1";
          // 
-         // treeView1
+         // trvZip
          // 
-         this.treeView1.Dock = System.Windows.Forms.DockStyle.Left;
-         this.treeView1.Location = new System.Drawing.Point(0, 24);
-         this.treeView1.Name = "treeView1";
-         this.treeView1.Size = new System.Drawing.Size(233, 527);
-         this.treeView1.TabIndex = 1;
+         this.trvZip.Dock = System.Windows.Forms.DockStyle.Left;
+         this.trvZip.Location = new System.Drawing.Point(0, 24);
+         this.trvZip.Name = "trvZip";
+         this.trvZip.Size = new System.Drawing.Size(233, 439);
+         this.trvZip.TabIndex = 1;
+         this.trvZip.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.trvZip_AfterSelect);
          // 
          // splitter1
          // 
          this.splitter1.Location = new System.Drawing.Point(233, 24);
          this.splitter1.Name = "splitter1";
-         this.splitter1.Size = new System.Drawing.Size(3, 527);
+         this.splitter1.Size = new System.Drawing.Size(3, 439);
          this.splitter1.TabIndex = 2;
          this.splitter1.TabStop = false;
          // 
-         // listView1
+         // lvwFiles
          // 
-         this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+         this.lvwFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
-         this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.listView1.Location = new System.Drawing.Point(236, 24);
-         this.listView1.Name = "listView1";
-         this.listView1.Size = new System.Drawing.Size(650, 527);
-         this.listView1.TabIndex = 3;
-         this.listView1.UseCompatibleStateImageBehavior = false;
-         this.listView1.View = System.Windows.Forms.View.Details;
+         this.lvwFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.lvwFiles.FullRowSelect = true;
+         this.lvwFiles.GridLines = true;
+         this.lvwFiles.Location = new System.Drawing.Point(236, 24);
+         this.lvwFiles.Name = "lvwFiles";
+         this.lvwFiles.Size = new System.Drawing.Size(619, 439);
+         this.lvwFiles.TabIndex = 3;
+         this.lvwFiles.UseCompatibleStateImageBehavior = false;
+         this.lvwFiles.View = System.Windows.Forms.View.Details;
          // 
          // columnHeader1
          // 
@@ -127,10 +129,10 @@
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(886, 551);
-         this.Controls.Add(this.listView1);
+         this.ClientSize = new System.Drawing.Size(855, 463);
+         this.Controls.Add(this.lvwFiles);
          this.Controls.Add(this.splitter1);
-         this.Controls.Add(this.treeView1);
+         this.Controls.Add(this.trvZip);
          this.Controls.Add(this.menuStrip1);
          this.MainMenuStrip = this.menuStrip1;
          this.Name = "FormMain";
@@ -151,10 +153,9 @@
       private System.Windows.Forms.FolderBrowserDialog dlgFolder;
       private System.Windows.Forms.SaveFileDialog dlgSave;
       private System.Windows.Forms.OpenFileDialog dlgOpen;
-      private System.Windows.Forms.TreeView treeView1;
+      private System.Windows.Forms.TreeView trvZip;
       private System.Windows.Forms.Splitter splitter1;
-      private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-      private System.Windows.Forms.ListView listView1;
+      private System.Windows.Forms.ListView lvwFiles;
       private System.Windows.Forms.ColumnHeader columnHeader1;
       private System.Windows.Forms.ColumnHeader columnHeader2;
       private System.Windows.Forms.ColumnHeader columnHeader3;
