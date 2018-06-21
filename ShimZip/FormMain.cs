@@ -40,8 +40,12 @@ namespace ShimZip {
       private void trvZip_AfterSelect(object sender, TreeViewEventArgs e) {
          this.lvwFiles.Items.Clear();
          DirData dirData = e.Node.Tag as DirData;
+         foreach (var dir in dirData.dirs) {
+            string[] subItems = new string[] { dir.name, "Dir", string.Empty };
+            this.lvwFiles.Items.Add(new ListViewItem(subItems));
+         }
          foreach (var file in dirData.files) {
-            string[] subItems = new string[] { file.name, file.index.ToString(), file.length.ToString() };
+            string[] subItems = new string[] { file.name, "File", file.length.ToString() };
             this.lvwFiles.Items.Add(new ListViewItem(subItems));
          }
       }
