@@ -25,8 +25,7 @@
       private void InitializeComponent() {
          this.menuStrip1 = new System.Windows.Forms.MenuStrip();
          this.zipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-         this.openZipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-         this.extractToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+         this.UnzipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
          this.dlgFolder = new System.Windows.Forms.FolderBrowserDialog();
          this.dlgSave = new System.Windows.Forms.SaveFileDialog();
          this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
@@ -43,8 +42,7 @@
          // 
          this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.zipToolStripMenuItem,
-            this.openZipToolStripMenuItem,
-            this.extractToolStripMenuItem});
+            this.UnzipToolStripMenuItem});
          this.menuStrip1.Location = new System.Drawing.Point(0, 0);
          this.menuStrip1.Name = "menuStrip1";
          this.menuStrip1.Size = new System.Drawing.Size(855, 24);
@@ -58,17 +56,12 @@
          this.zipToolStripMenuItem.Text = "Zip";
          this.zipToolStripMenuItem.Click += new System.EventHandler(this.zipToolStripMenuItem_Click);
          // 
-         // openZipToolStripMenuItem
+         // UnzipToolStripMenuItem
          // 
-         this.openZipToolStripMenuItem.Name = "openZipToolStripMenuItem";
-         this.openZipToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
-         this.openZipToolStripMenuItem.Text = "Open Zip";
-         // 
-         // extractToolStripMenuItem
-         // 
-         this.extractToolStripMenuItem.Name = "extractToolStripMenuItem";
-         this.extractToolStripMenuItem.Size = new System.Drawing.Size(55, 20);
-         this.extractToolStripMenuItem.Text = "Extract";
+         this.UnzipToolStripMenuItem.Name = "UnzipToolStripMenuItem";
+         this.UnzipToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+         this.UnzipToolStripMenuItem.Text = "Unzip";
+         this.UnzipToolStripMenuItem.Click += new System.EventHandler(this.UnzipToolStripMenuItem_Click);
          // 
          // dlgSave
          // 
@@ -114,7 +107,7 @@
          // columnHeader1
          // 
          this.columnHeader1.Text = "이름";
-         this.columnHeader1.Width = 200;
+         this.columnHeader1.Width = 313;
          // 
          // columnHeader2
          // 
@@ -148,8 +141,7 @@
 
       private System.Windows.Forms.MenuStrip menuStrip1;
       private System.Windows.Forms.ToolStripMenuItem zipToolStripMenuItem;
-      private System.Windows.Forms.ToolStripMenuItem openZipToolStripMenuItem;
-      private System.Windows.Forms.ToolStripMenuItem extractToolStripMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem UnzipToolStripMenuItem;
       private System.Windows.Forms.FolderBrowserDialog dlgFolder;
       private System.Windows.Forms.SaveFileDialog dlgSave;
       private System.Windows.Forms.OpenFileDialog dlgOpen;
