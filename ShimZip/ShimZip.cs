@@ -38,6 +38,8 @@ namespace ShimZip {
 
    class FileData {
       public string name = string.Empty;
+      public byte[] data;
+      
       public long index = 0;
       public long length = 0;
       public FileData(string filePath) {
