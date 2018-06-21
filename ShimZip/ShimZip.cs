@@ -7,31 +7,6 @@ using System.IO;
 
 namespace ShimZip {
    class ShimZip {
-      public static DirData GetDirData(string dir) {
-         DirData dirData = GetDirDataRec(dir);
-         return dirData;
-      }
-
-      private static DirData GetDirDataRec(string dir) {
-         DirData dirData = new DirData();
-         dirData.name = Path.GetFileName(dir);
-         
-         string[] files = Directory.GetFiles(dir);
-         foreach (var file in files) {
-            FileData fileData = new FileData();
-            fileData.name = Path.GetFileName(file);
-            
-            dirData.fileDatas.Add(fileData);
-         }
-
-         string[] subDirs = Directory.GetDirectories(dir);
-         foreach (var subDir in subDirs) {
-            dirData.dirDatas.Add(GetDirDataRec(subDir));
-         }
-
-         return dirData;
-      }
-
       public static void ZipFile(string[] files, string[] dirs, string zipFilePath) {
          var sr = File.OpenWrite(zipFilePath);
          using (BinaryWriter bw = new BinaryWriter(sr)) {
@@ -70,6 +45,8 @@ namespace ShimZip {
 
       public static void UnzipRecursive(string dir, BinaryReader br) {
          Directory.CreateDirectory(dir);
+         
+         // files
          int fileCount = br.ReadInt32();
          for (int i=0; i<fileCount; i++) {
             string fileName = br.ReadString();
@@ -79,6 +56,7 @@ namespace ShimZip {
             File.WriteAllBytes(filePath, data);
          }
 
+         // dirs
          int dirCount = br.ReadInt32();
          for (int i=0; i<dirCount; i++) {
             string subDirName = br.ReadString();
@@ -86,15 +64,5 @@ namespace ShimZip {
             UnzipRecursive(subDir, br);
          }
       }
-   }
-
-   class DirData {
-      public string name;
-      public List<FileData> fileDatas = new List<FileData>();
-      public List<DirData> dirDatas = new List<DirData>();
-   }
-
-   class FileData {
-      public string name;
    }
 }
