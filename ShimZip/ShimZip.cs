@@ -8,91 +8,61 @@ using System.IO;
 namespace ShimZip {
    class ShimZip {
       // file/dirs => zip file
-      public static void ZipFile(string[] files, string[] dirs, string zipFilePath) {
+      public static int ZipFile(string[] files, string[] dirs, string zipFilePath) {
          var sr = File.OpenWrite(zipFilePath);
-         using (BinaryWriter bw = new BinaryWriter(sr)) {
-            ZipHeader(bw);
-            ZipRecursive(files, dirs, bw);
+         using (BinaryWriter writer = new BinaryWriter(sr)) {
+            // header
+            byte[] magic = Encoding.ASCII.GetBytes("SZIP");
+            short version = 1;
+            writer.Write(magic);
+            writer.Write(version);
+
+            // write file recursive
+            return ZipFileRecursive(files, dirs, writer);
          }
       }
 
-      // zip header
-      private static void ZipHeader(BinaryWriter writer) {
-         byte[] magic = Encoding.ASCII.GetBytes("SZIP");
-         short version = 1;
-         writer.Write(magic);
-         writer.Write(version);
-      }
-
-      // zip recursive
-      private static void ZipRecursive(string[] files, string[] dirs, BinaryWriter bw) {
+      // recursive
+      private static int ZipFileRecursive(string[] files, string[] dirs, BinaryWriter writer) {
+         int fileCnt = files.Length;
+         
          // files
-         bw.Write(files.Length);
+         writer.Write(files.Length);
          foreach (var file in files) {
             FileInfo fi = new FileInfo(file);
-            bw.Write(fi.Name);
-            bw.Write((int)fi.Length);
+            writer.Write(fi.Name);
+            writer.Write((int)fi.Length);
             var data = File.ReadAllBytes(file);
-            bw.Write(data);
+            writer.Write(data);
          }
 
          // dirs
-         bw.Write(dirs.Length);
+         writer.Write(dirs.Length);
          foreach (var dir in dirs) {
             DirectoryInfo di = new DirectoryInfo(dir);
-            bw.Write(di.Name);
+            writer.Write(di.Name);
             var subFiles = Directory.GetFiles(dir);
             var subDirs = Directory.GetDirectories(dir);
-            ZipRecursive(subFiles, subDirs, bw);
+            fileCnt += ZipFileRecursive(subFiles, subDirs, writer);
          }
+
+         return fileCnt;
       }
 
-      // zip file => extract file/dirs
-      //public static void UnzipFile(string zipFilePath, string unzipDir) {
-      //   var sr = File.OpenRead(zipFilePath);
-      //   using (BinaryReader br = new BinaryReader(sr)) {
-      //      UnzipRecursive(unzipDir, br);
-      //   }
-      //}
-
-      //private static void UnzipRecursive(string dir, BinaryReader br) {
-      //   Directory.CreateDirectory(dir);
-         
-      //   // files
-      //   int fileCount = br.ReadInt32();
-      //   for (int i=0; i<fileCount; i++) {
-      //      string fileName = br.ReadString();
-      //      int fileLength = br.ReadInt32();
-      //      string filePath = dir + "\\" + fileName;
-      //      byte[] data = br.ReadBytes(fileLength);
-      //      File.WriteAllBytes(filePath, data);
-      //   }
-
-      //   // dirs
-      //   int dirCount = br.ReadInt32();
-      //   for (int i=0; i<dirCount; i++) {
-      //      string subDirName = br.ReadString();
-      //      string subDir = dir + "\\" + subDirName;
-      //      UnzipRecursive(subDir, br);
-      //   }
-      //}
-
-      // zip 파일로 부터 zipData 가져옴
+      // zip file => zipData struct
       public static ZipData GetZipData(BinaryReader reader) {
          ZipData zipData = new ZipData();
-         GetZipHeader(zipData, reader);
+         
+         // header
+         zipData.header = reader.ReadBytes(4);
+         zipData.version = reader.ReadInt16();
+         
          GetZipDataRecursive(zipData, reader);
          return zipData;
       }
 
-      // Header
-      private static void GetZipHeader(ZipData zipData, BinaryReader reader) {
-         zipData.header = reader.ReadBytes(4);
-         zipData.version = reader.ReadInt16();
-      }
-
       // recursive
-      public static void GetZipDataRecursive(ZipData zipData, BinaryReader br) {
+      private static void GetZipDataRecursive(ZipData zipData, BinaryReader br) {
          // files
          int fileCount = br.ReadInt32();
          for (int i=0; i<fileCount; i++) {
@@ -114,6 +84,35 @@ namespace ShimZip {
             zipData.dirDatas.Add(dirData);
             GetZipDataRecursive(dirData, br);
          }
+      }
+
+      // file/dirs => zip file
+      public static int UnzipFile(List<FileData> fileDatas, List<DirData> dirDatas, BinaryReader br, string unzipDir) {
+         return UnzipFileRecursive(fileDatas, dirDatas, br, unzipDir);
+      }
+
+      // recursive
+      private static int UnzipFileRecursive(List<FileData> fileDatas, List<DirData> dirDatas, BinaryReader br, string dir) {
+         if (Directory.Exists(dir) == false)
+            Directory.CreateDirectory(dir);
+
+         int fileCnt = fileDatas.Count;
+         
+         // files
+         foreach (var fileData in fileDatas) {
+            string filePath = dir + "\\" + fileData.name;
+            br.BaseStream.Seek(fileData.offset, SeekOrigin.Begin);
+            byte[] data = br.ReadBytes((int)fileData.length);
+            File.WriteAllBytes(filePath, data);
+         }
+
+         // dirs
+         foreach (var dirData in dirDatas) {
+            string subDir = dir + "\\" + dirData.name;
+            fileCnt += UnzipFileRecursive(dirData.fileDatas, dirData.dirDatas, br, subDir);
+         }
+
+         return fileCnt;
       }
    }
 

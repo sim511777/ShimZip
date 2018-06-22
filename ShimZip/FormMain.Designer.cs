@@ -36,6 +36,8 @@
          this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+         this.extractAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+         this.exractSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
          this.menuStrip1.SuspendLayout();
          this.SuspendLayout();
          // 
@@ -43,7 +45,9 @@
          // 
          this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.zipToolStripMenuItem,
-            this.openToolStripMenuItem});
+            this.openToolStripMenuItem,
+            this.extractAllToolStripMenuItem,
+            this.exractSelectedToolStripMenuItem});
          this.menuStrip1.Location = new System.Drawing.Point(0, 0);
          this.menuStrip1.Name = "menuStrip1";
          this.menuStrip1.Size = new System.Drawing.Size(832, 24);
@@ -66,11 +70,14 @@
          // 
          // dlgSave
          // 
+         this.dlgSave.DefaultExt = "szip";
          this.dlgSave.Filter = "Shim Zip FIile|*.szip";
          // 
          // dlgOpen
          // 
+         this.dlgOpen.DefaultExt = "szip";
          this.dlgOpen.FileName = "openFileDialog1";
+         this.dlgOpen.Filter = "Shim Zip FIile|*.szip";
          // 
          // trvZip
          // 
@@ -131,6 +138,20 @@
          this.statusStrip1.TabIndex = 4;
          this.statusStrip1.Text = "statusStrip1";
          // 
+         // extractAllToolStripMenuItem
+         // 
+         this.extractAllToolStripMenuItem.Name = "extractAllToolStripMenuItem";
+         this.extractAllToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
+         this.extractAllToolStripMenuItem.Text = "Extract All";
+         this.extractAllToolStripMenuItem.Click += new System.EventHandler(this.extractAllToolStripMenuItem_Click);
+         // 
+         // exractSelectedToolStripMenuItem
+         // 
+         this.exractSelectedToolStripMenuItem.Name = "exractSelectedToolStripMenuItem";
+         this.exractSelectedToolStripMenuItem.Size = new System.Drawing.Size(100, 20);
+         this.exractSelectedToolStripMenuItem.Text = "Exract Selected";
+         this.exractSelectedToolStripMenuItem.Click += new System.EventHandler(this.exractSelectedToolStripMenuItem_Click);
+         // 
          // FormMain
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -166,6 +187,8 @@
       private System.Windows.Forms.ColumnHeader columnHeader2;
       private System.Windows.Forms.ColumnHeader columnHeader3;
       private System.Windows.Forms.StatusStrip statusStrip1;
+      private System.Windows.Forms.ToolStripMenuItem extractAllToolStripMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem exractSelectedToolStripMenuItem;
    }
 }
 

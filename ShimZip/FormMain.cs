@@ -17,14 +17,7 @@ namespace ShimZip {
 
       private BinaryReader reader;
 
-      private void DirDataToTree(ZipData dirData, TreeNodeCollection nodes) {
-         foreach (var subDir in dirData.dirDatas) {
-            var node = nodes.Add(subDir.name);
-            node.Tag = subDir;
-            this.DirDataToTree(subDir, node.Nodes);
-         }
-      }
-
+      // zipData -> tree
       private void ZipToTree(string zipFileName, ZipData zipData) {
          this.trvZip.Nodes.Clear();
          var node = this.trvZip.Nodes.Add(zipFileName);
@@ -35,24 +28,35 @@ namespace ShimZip {
          node.Expand();
       }
 
+      // dirData -> tree recursive
+      private void DirDataToTree(ZipData dirData, TreeNodeCollection nodes) {
+         foreach (var subDir in dirData.dirDatas) {
+            var node = nodes.Add(subDir.name);
+            node.Tag = subDir;
+            this.DirDataToTree(subDir, node.Nodes);
+         }
+      }
+
       // == event handler
       private void zipToolStripMenuItem_Click(object sender, EventArgs e) {
-         this.dlgFolder.SelectedPath = @"E:\joy\Game\Quake";
          if (this.dlgFolder.ShowDialog(this) != DialogResult.OK)
             return;
-                  
          string dir = this.dlgFolder.SelectedPath;
-         string zipFilePath = dir + ".szip";
+
+         this.dlgSave.InitialDirectory = Path.GetDirectoryName(dir);
+         this.dlgSave.FileName = Path.GetFileName(dir) + ".szip";
+         if (this.dlgSave.ShowDialog(this) != DialogResult.OK)
+            return;
+         string zipFilePath = this.dlgSave.FileName;
 
          var files = Directory.GetFiles(dir);
          var dirs = Directory.GetDirectories(dir);
-         ShimZip.ZipFile(files, dirs, zipFilePath);
+         int fileCnt = ShimZip.ZipFile(files, dirs, zipFilePath);
          
-         MessageBox.Show(zipFilePath + " ziped");
+         MessageBox.Show($"{fileCnt} files ziped to {zipFilePath}");
       }
 
       private void OpenToolStripMenuItem_Click(object sender, EventArgs e) {
-         this.dlgOpen.FileName = @"E:\joy\Game\Quake.sip";
          if (this.dlgOpen.ShowDialog() != DialogResult.OK)
             return;
          
@@ -78,6 +82,35 @@ namespace ShimZip {
             var item = this.lvwFiles.Items.Add(new ListViewItem(subItems));
             item.Tag = fileData;
          }
+      }
+
+      private void extractAllToolStripMenuItem_Click(object sender, EventArgs e) {
+         if (this.reader == null || this.trvZip.Nodes.Count == 0)
+            return;
+
+         var zipData = this.trvZip.Nodes[0].Tag as ZipData;
+         if (zipData == null)
+            return;
+
+         if (this.dlgFolder.ShowDialog(this) != DialogResult.OK)
+            return;
+         string unzipDir = this.dlgFolder.SelectedPath;
+
+         int fileCnt = ShimZip.UnzipFile(zipData.fileDatas, zipData.dirDatas, this.reader, unzipDir);
+         MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.");
+      }
+
+      private void exractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
+         if (this.dlgFolder.ShowDialog(this) != DialogResult.OK)
+            return;
+         string unzipDir = this.dlgFolder.SelectedPath;
+
+         var selItems = this.lvwFiles.SelectedItems.Cast<ListViewItem>();
+         var fileDatas = selItems.Where(item => item.Tag is FileData).Select(item => item.Tag as FileData).ToList();
+         var dirDatas = selItems.Where(item => item.Tag is DirData).Select(item => item.Tag as DirData).ToList();
+
+         int fileCnt = ShimZip.UnzipFile(fileDatas, dirDatas, this.reader, unzipDir);
+         MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.");
       }
    }
 }
