@@ -1,5 +1,18 @@
-﻿1. 디렉토리 -> szip
-2. szip -> memory structure
-3. memory structure -> Extract
-4. 암호화
-5. 압축
+﻿1. ZipFile(fileList, dirList, zipFilePath)
+  - zipData = GetZipData(fileList, dirList)
+    - realPath 까지 기록
+  - EncodeZipFile(zipData, binaryWriter, binaryWriter);
+2. UnzipFile(zipFilePath, unzipDir)
+  - zipData = GetZipData(zipFilePath);
+  - DecodeZipFile(zipData, binaryReader, unzipDir);
+    - bytes = DecodeZipFile(zipFile, binaryReader);
+
+3. 파일트리구조를 시작부에 기록 할것
+4. FileData.offset에 인코딩 될 파일의 인덱스를 기록할것
+5. FileData -> Encoding -> FileWriting
+6. 위에것을 조합하여 전체 압축 만들것
+7. Encoding -> 압축 알고리즘 적용 할것
+5. 파일시작부만 읽어서 파일트리구조를 읽어올것
+6. FileData로 부터 한개의 파일만 Decoding 가능 할것
+7. 이것을 전체 조합해서 한꺼번에 풀기를 만들것
+8. Decoding -> 압축 알고리즘 적용 할것

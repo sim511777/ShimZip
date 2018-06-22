@@ -64,5 +64,63 @@ namespace ShimZip {
             UnzipRecursive(subDir, br);
          }
       }
+
+      public static ZipData GetZipData(string[] files, string[] dirs, string zipFilePath) {
+         ZipData zipData = new ZipData();
+         GetZipDataRecursive(files, dirs, zipData, 0);
+         return zipData;
+      }
+
+      public static void GetZipDataRecursive(string[] files, string[] dirs, ZipData zipData) {
+         // files
+         foreach (var file in files) {
+            FileInfo fi = new FileInfo(file);
+            FileData fileData = new FileData(fi.Name, 0, fi.Length, fi.FullName);
+            zipData.fileDatas.Add(fileData);
+         }
+
+         // dirs
+         foreach (var dir in dirs) {
+            DirectoryInfo di = new DirectoryInfo(dir);
+            DirData dirData = new DirData(di.Name, di.FullName);
+            zipData.dirDatas.Add(dirData);
+            
+            var subFiles = Directory.GetFiles(dir);
+            var subDirs = Directory.GetDirectories(dir);
+            GetZipDataRecursive(subFiles, subDirs, dirData);
+         }
+      }
+
+      public static ZipData GetZipData(string zipFilePath) {
+         ZipData zipData = new ZipData();
+         return zipData;
+      }
+   }
+
+   public class ZipData {
+      public List<FileData> fileDatas = new List<FileData>();
+      public List<DirData> dirDatas = new List<DirData>();
+   }
+
+   public class FileData {
+      public string name;
+      public int offset;
+      public long length;
+      public string realPath;
+      public FileData(string name, int offset, long length, string realPath) {
+         this.name = name;
+         this.realPath = realPath;
+         this.offset = offset;
+         this.length = length;
+      }
+   }
+
+   public class DirData : ZipData {
+      public string name;
+      public string realPath;
+      public DirData(string name, string realPath) {
+         this.name = name;
+         this.realPath = realPath;
+      }
    }
 }
