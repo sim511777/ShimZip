@@ -25,7 +25,7 @@
       private void InitializeComponent() {
          this.menuStrip1 = new System.Windows.Forms.MenuStrip();
          this.zipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-         this.UnzipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+         this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
          this.dlgFolder = new System.Windows.Forms.FolderBrowserDialog();
          this.dlgSave = new System.Windows.Forms.SaveFileDialog();
          this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
@@ -35,6 +35,7 @@
          this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+         this.statusStrip1 = new System.Windows.Forms.StatusStrip();
          this.menuStrip1.SuspendLayout();
          this.SuspendLayout();
          // 
@@ -42,10 +43,10 @@
          // 
          this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.zipToolStripMenuItem,
-            this.UnzipToolStripMenuItem});
+            this.openToolStripMenuItem});
          this.menuStrip1.Location = new System.Drawing.Point(0, 0);
          this.menuStrip1.Name = "menuStrip1";
-         this.menuStrip1.Size = new System.Drawing.Size(855, 24);
+         this.menuStrip1.Size = new System.Drawing.Size(832, 24);
          this.menuStrip1.TabIndex = 0;
          this.menuStrip1.Text = "menuStrip1";
          // 
@@ -56,12 +57,12 @@
          this.zipToolStripMenuItem.Text = "Zip";
          this.zipToolStripMenuItem.Click += new System.EventHandler(this.zipToolStripMenuItem_Click);
          // 
-         // UnzipToolStripMenuItem
+         // openToolStripMenuItem
          // 
-         this.UnzipToolStripMenuItem.Name = "UnzipToolStripMenuItem";
-         this.UnzipToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
-         this.UnzipToolStripMenuItem.Text = "Unzip";
-         this.UnzipToolStripMenuItem.Click += new System.EventHandler(this.UnzipToolStripMenuItem_Click);
+         this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+         this.openToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+         this.openToolStripMenuItem.Text = "Open Zip";
+         this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
          // 
          // dlgSave
          // 
@@ -74,9 +75,10 @@
          // trvZip
          // 
          this.trvZip.Dock = System.Windows.Forms.DockStyle.Left;
+         this.trvZip.HideSelection = false;
          this.trvZip.Location = new System.Drawing.Point(0, 24);
          this.trvZip.Name = "trvZip";
-         this.trvZip.Size = new System.Drawing.Size(233, 439);
+         this.trvZip.Size = new System.Drawing.Size(233, 460);
          this.trvZip.TabIndex = 1;
          this.trvZip.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.trvZip_AfterSelect);
          // 
@@ -84,7 +86,7 @@
          // 
          this.splitter1.Location = new System.Drawing.Point(233, 24);
          this.splitter1.Name = "splitter1";
-         this.splitter1.Size = new System.Drawing.Size(3, 439);
+         this.splitter1.Size = new System.Drawing.Size(3, 460);
          this.splitter1.TabIndex = 2;
          this.splitter1.TabStop = false;
          // 
@@ -97,39 +99,51 @@
          this.lvwFiles.Dock = System.Windows.Forms.DockStyle.Fill;
          this.lvwFiles.FullRowSelect = true;
          this.lvwFiles.GridLines = true;
+         this.lvwFiles.HideSelection = false;
          this.lvwFiles.Location = new System.Drawing.Point(236, 24);
          this.lvwFiles.Name = "lvwFiles";
-         this.lvwFiles.Size = new System.Drawing.Size(619, 439);
+         this.lvwFiles.Size = new System.Drawing.Size(596, 460);
          this.lvwFiles.TabIndex = 3;
          this.lvwFiles.UseCompatibleStateImageBehavior = false;
          this.lvwFiles.View = System.Windows.Forms.View.Details;
          // 
          // columnHeader1
          // 
-         this.columnHeader1.Text = "이름";
-         this.columnHeader1.Width = 313;
+         this.columnHeader1.Text = "name";
+         this.columnHeader1.Width = 237;
          // 
          // columnHeader2
          // 
-         this.columnHeader2.Text = "유형";
+         this.columnHeader2.Text = "type";
+         this.columnHeader2.Width = 107;
          // 
          // columnHeader3
          // 
-         this.columnHeader3.Text = "크기";
-         this.columnHeader3.Width = 100;
+         this.columnHeader3.Text = "size";
+         this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+         this.columnHeader3.Width = 77;
+         // 
+         // statusStrip1
+         // 
+         this.statusStrip1.Location = new System.Drawing.Point(0, 484);
+         this.statusStrip1.Name = "statusStrip1";
+         this.statusStrip1.Size = new System.Drawing.Size(832, 22);
+         this.statusStrip1.TabIndex = 4;
+         this.statusStrip1.Text = "statusStrip1";
          // 
          // FormMain
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(855, 463);
+         this.ClientSize = new System.Drawing.Size(832, 506);
          this.Controls.Add(this.lvwFiles);
          this.Controls.Add(this.splitter1);
          this.Controls.Add(this.trvZip);
          this.Controls.Add(this.menuStrip1);
+         this.Controls.Add(this.statusStrip1);
          this.MainMenuStrip = this.menuStrip1;
          this.Name = "FormMain";
-         this.Text = "Form1";
+         this.Text = "ShimZip";
          this.menuStrip1.ResumeLayout(false);
          this.menuStrip1.PerformLayout();
          this.ResumeLayout(false);
@@ -141,7 +155,7 @@
 
       private System.Windows.Forms.MenuStrip menuStrip1;
       private System.Windows.Forms.ToolStripMenuItem zipToolStripMenuItem;
-      private System.Windows.Forms.ToolStripMenuItem UnzipToolStripMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
       private System.Windows.Forms.FolderBrowserDialog dlgFolder;
       private System.Windows.Forms.SaveFileDialog dlgSave;
       private System.Windows.Forms.OpenFileDialog dlgOpen;
@@ -151,6 +165,7 @@
       private System.Windows.Forms.ColumnHeader columnHeader1;
       private System.Windows.Forms.ColumnHeader columnHeader2;
       private System.Windows.Forms.ColumnHeader columnHeader3;
+      private System.Windows.Forms.StatusStrip statusStrip1;
    }
 }
 

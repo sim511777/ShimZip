@@ -7,21 +7,25 @@ using System.IO;
 
 namespace ShimZip {
    class ShimZip {
+      // file/dirs => zip file
       public static void ZipFile(string[] files, string[] dirs, string zipFilePath) {
          var sr = File.OpenWrite(zipFilePath);
          using (BinaryWriter bw = new BinaryWriter(sr)) {
+            ZipHeader(bw);
             ZipRecursive(files, dirs, bw);
          }
       }
 
-      public static void UnzipFile(string zipFilePath, string unzipDir) {
-         var sr = File.OpenRead(zipFilePath);
-         using (BinaryReader br = new BinaryReader(sr)) {
-            UnzipRecursive(unzipDir, br);
-         }
+      // zip header
+      private static void ZipHeader(BinaryWriter writer) {
+         byte[] magic = Encoding.ASCII.GetBytes("SZIP");
+         short version = 1;
+         writer.Write(magic);
+         writer.Write(version);
       }
 
-      public static void ZipRecursive(string[] files, string[] dirs, BinaryWriter bw) {
+      // zip recursive
+      private static void ZipRecursive(string[] files, string[] dirs, BinaryWriter bw) {
          // files
          bw.Write(files.Length);
          foreach (var file in files) {
@@ -43,40 +47,51 @@ namespace ShimZip {
          }
       }
 
-      public static void UnzipRecursive(string dir, BinaryReader br) {
-         Directory.CreateDirectory(dir);
-         
-         // files
-         int fileCount = br.ReadInt32();
-         for (int i=0; i<fileCount; i++) {
-            string fileName = br.ReadString();
-            int fileLength = br.ReadInt32();
-            string filePath = dir + "\\" + fileName;
-            byte[] data = br.ReadBytes(fileLength);
-            File.WriteAllBytes(filePath, data);
-         }
+      // zip file => extract file/dirs
+      //public static void UnzipFile(string zipFilePath, string unzipDir) {
+      //   var sr = File.OpenRead(zipFilePath);
+      //   using (BinaryReader br = new BinaryReader(sr)) {
+      //      UnzipRecursive(unzipDir, br);
+      //   }
+      //}
 
-         // dirs
-         int dirCount = br.ReadInt32();
-         for (int i=0; i<dirCount; i++) {
-            string subDirName = br.ReadString();
-            string subDir = dir + "\\" + subDirName;
-            UnzipRecursive(subDir, br);
-         }
-      }
+      //private static void UnzipRecursive(string dir, BinaryReader br) {
+      //   Directory.CreateDirectory(dir);
+         
+      //   // files
+      //   int fileCount = br.ReadInt32();
+      //   for (int i=0; i<fileCount; i++) {
+      //      string fileName = br.ReadString();
+      //      int fileLength = br.ReadInt32();
+      //      string filePath = dir + "\\" + fileName;
+      //      byte[] data = br.ReadBytes(fileLength);
+      //      File.WriteAllBytes(filePath, data);
+      //   }
+
+      //   // dirs
+      //   int dirCount = br.ReadInt32();
+      //   for (int i=0; i<dirCount; i++) {
+      //      string subDirName = br.ReadString();
+      //      string subDir = dir + "\\" + subDirName;
+      //      UnzipRecursive(subDir, br);
+      //   }
+      //}
 
       // zip 파일로 부터 zipData 가져옴
-      public static ZipData GetZipData(string zipFilePath) {
+      public static ZipData GetZipData(BinaryReader reader) {
          ZipData zipData = new ZipData();
-         
-         using (var stream = File.OpenRead(zipFilePath))
-         using (var reader = new BinaryReader(stream)) {
-            GetZipDataRecursive(zipData, reader);
-         }
-
+         GetZipHeader(zipData, reader);
+         GetZipDataRecursive(zipData, reader);
          return zipData;
       }
 
+      // Header
+      private static void GetZipHeader(ZipData zipData, BinaryReader reader) {
+         zipData.header = reader.ReadBytes(4);
+         zipData.version = reader.ReadInt16();
+      }
+
+      // recursive
       public static void GetZipDataRecursive(ZipData zipData, BinaryReader br) {
          // files
          int fileCount = br.ReadInt32();
@@ -103,6 +118,8 @@ namespace ShimZip {
    }
 
    public class ZipData {
+      public byte[] header;
+      public short version;
       public List<FileData> fileDatas = new List<FileData>();
       public List<DirData> dirDatas = new List<DirData>();
    }
