@@ -65,35 +65,40 @@ namespace ShimZip {
          }
       }
 
-      public static ZipData GetZipData(string[] files, string[] dirs, string zipFilePath) {
+      // zip 파일로 부터 zipData 가져옴
+      public static ZipData GetZipData(string zipFilePath) {
          ZipData zipData = new ZipData();
-         GetZipDataRecursive(files, dirs, zipData, 0);
+         
+         using (var stream = File.OpenRead(zipFilePath))
+         using (var reader = new BinaryReader(stream)) {
+            GetZipDataRecursive(zipData, reader);
+         }
+
          return zipData;
       }
 
-      public static void GetZipDataRecursive(string[] files, string[] dirs, ZipData zipData) {
+      public static void GetZipDataRecursive(ZipData zipData, BinaryReader br) {
          // files
-         foreach (var file in files) {
-            FileInfo fi = new FileInfo(file);
-            FileData fileData = new FileData(fi.Name, 0, fi.Length, fi.FullName);
+         int fileCount = br.ReadInt32();
+         for (int i=0; i<fileCount; i++) {
+            string fileName = br.ReadString();
+            int fileLength = br.ReadInt32();
+            int fileOffset = (int)br.BaseStream.Position;
+            br.BaseStream.Seek(fileLength, SeekOrigin.Current);
+            
+            FileData fileData = new FileData(fileName, fileOffset, fileLength);
             zipData.fileDatas.Add(fileData);
          }
 
          // dirs
-         foreach (var dir in dirs) {
-            DirectoryInfo di = new DirectoryInfo(dir);
-            DirData dirData = new DirData(di.Name, di.FullName);
-            zipData.dirDatas.Add(dirData);
-            
-            var subFiles = Directory.GetFiles(dir);
-            var subDirs = Directory.GetDirectories(dir);
-            GetZipDataRecursive(subFiles, subDirs, dirData);
-         }
-      }
+         int dirCount = br.ReadInt32();
+         for (int i=0; i<dirCount; i++) {
+            string dirName = br.ReadString();
 
-      public static ZipData GetZipData(string zipFilePath) {
-         ZipData zipData = new ZipData();
-         return zipData;
+            DirData dirData = new DirData(dirName);
+            zipData.dirDatas.Add(dirData);
+            GetZipDataRecursive(dirData, br);
+         }
       }
    }
 
@@ -106,10 +111,8 @@ namespace ShimZip {
       public string name;
       public int offset;
       public long length;
-      public string realPath;
-      public FileData(string name, int offset, long length, string realPath) {
+      public FileData(string name, int offset, long length) {
          this.name = name;
-         this.realPath = realPath;
          this.offset = offset;
          this.length = length;
       }
@@ -117,10 +120,8 @@ namespace ShimZip {
 
    public class DirData : ZipData {
       public string name;
-      public string realPath;
-      public DirData(string name, string realPath) {
+      public DirData(string name) {
          this.name = name;
-         this.realPath = realPath;
       }
    }
 }

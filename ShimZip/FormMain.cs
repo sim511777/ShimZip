@@ -36,7 +36,11 @@ namespace ShimZip {
          this.dlgOpen.FileName = @"E:\joy\Game\Quake_.sip";
          if (this.dlgOpen.ShowDialog() != DialogResult.OK)
             return;
+         
          string zipFilePath = this.dlgOpen.FileName;
+
+         var zipData = ShimZip.GetZipData(zipFilePath);
+         
          string unzipDir = Path.GetDirectoryName(zipFilePath) + "\\" + Path.GetFileNameWithoutExtension(zipFilePath);
          ShimZip.UnzipFile(this.dlgOpen.FileName, unzipDir);
          MessageBox.Show(zipFilePath + " unziped");
