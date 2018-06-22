@@ -15,7 +15,7 @@ namespace ShimZip {
          InitializeComponent();
       }
 
-      private BinaryReader reader;
+      private BinaryReader br;
 
       // zipData -> tree
       private void ZipToTree(string zipFileName, ZipData zipData) {
@@ -61,8 +61,8 @@ namespace ShimZip {
             return;
          
          string zipFilePath = this.dlgOpen.FileName;
-         this.reader = new BinaryReader(File.OpenRead(zipFilePath));
-         var zipData = ShimZip.GetZipData(this.reader);
+         this.br = new BinaryReader(File.OpenRead(zipFilePath));
+         var zipData = ShimZip.GetZipData(this.br);
 
          string zipFileName = Path.GetFileName(zipFilePath);
          this.ZipToTree(zipFileName, zipData);
@@ -85,7 +85,7 @@ namespace ShimZip {
       }
 
       private void extractAllToolStripMenuItem_Click(object sender, EventArgs e) {
-         if (this.reader == null || this.trvZip.Nodes.Count == 0)
+         if (this.br == null || this.trvZip.Nodes.Count == 0)
             return;
 
          var zipData = this.trvZip.Nodes[0].Tag as ZipData;
@@ -96,7 +96,7 @@ namespace ShimZip {
             return;
          string unzipDir = this.dlgFolder.SelectedPath;
 
-         int fileCnt = ShimZip.UnzipFile(zipData.fileDatas, zipData.dirDatas, this.reader, unzipDir);
+         int fileCnt = ShimZip.UnzipFile(zipData.fileDatas, zipData.dirDatas, this.br, unzipDir);
          MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.");
       }
 
@@ -109,7 +109,7 @@ namespace ShimZip {
          var fileDatas = selItems.Where(item => item.Tag is FileData).Select(item => item.Tag as FileData).ToList();
          var dirDatas = selItems.Where(item => item.Tag is DirData).Select(item => item.Tag as DirData).ToList();
 
-         int fileCnt = ShimZip.UnzipFile(fileDatas, dirDatas, this.reader, unzipDir);
+         int fileCnt = ShimZip.UnzipFile(fileDatas, dirDatas, this.br, unzipDir);
          MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.");
       }
    }

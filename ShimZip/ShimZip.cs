@@ -10,54 +10,60 @@ namespace ShimZip {
       // file/dirs => zip file
       public static int ZipFile(string[] files, string[] dirs, string zipFilePath) {
          var sr = File.OpenWrite(zipFilePath);
-         using (BinaryWriter writer = new BinaryWriter(sr)) {
+         using (BinaryWriter bw = new BinaryWriter(sr)) {
             // header
             byte[] magic = Encoding.ASCII.GetBytes("SZIP");
             short version = 1;
-            writer.Write(magic);
-            writer.Write(version);
+            bw.Write(magic);
+            bw.Write(version);
 
             // write file recursive
-            return ZipFileRecursive(files, dirs, writer);
+            return ZipFileRecursive(files, dirs, bw);
          }
       }
 
       // recursive
-      private static int ZipFileRecursive(string[] files, string[] dirs, BinaryWriter writer) {
+      private static int ZipFileRecursive(string[] files, string[] dirs, BinaryWriter bw) {
          int fileCnt = files.Length;
          
          // files
-         writer.Write(files.Length);
+         bw.Write(files.Length);
          foreach (var file in files) {
             FileInfo fi = new FileInfo(file);
-            writer.Write(fi.Name);
-            writer.Write((int)fi.Length);
-            var data = File.ReadAllBytes(file);
-            writer.Write(data);
+            bw.Write(fi.Name);
+            bw.Write(fi.Length);
+            FileToStream(file, bw);
          }
 
          // dirs
-         writer.Write(dirs.Length);
+         bw.Write(dirs.Length);
          foreach (var dir in dirs) {
             DirectoryInfo di = new DirectoryInfo(dir);
-            writer.Write(di.Name);
+            bw.Write(di.Name);
             var subFiles = Directory.GetFiles(dir);
             var subDirs = Directory.GetDirectories(dir);
-            fileCnt += ZipFileRecursive(subFiles, subDirs, writer);
+            fileCnt += ZipFileRecursive(subFiles, subDirs, bw);
          }
 
          return fileCnt;
       }
 
+      // file => stream
+      private static void FileToStream(string filePath, BinaryWriter bw) {
+         // todo: long length file?
+         byte[] data = File.ReadAllBytes(filePath);
+         bw.Write(data);
+      }
+
       // zip file => zipData struct
-      public static ZipData GetZipData(BinaryReader reader) {
+      public static ZipData GetZipData(BinaryReader br) {
          ZipData zipData = new ZipData();
          
          // header
-         zipData.header = reader.ReadBytes(4);
-         zipData.version = reader.ReadInt16();
+         zipData.header = br.ReadBytes(4);
+         zipData.version = br.ReadInt16();
          
-         GetZipDataRecursive(zipData, reader);
+         GetZipDataRecursive(zipData, br);
          return zipData;
       }
 
@@ -67,8 +73,8 @@ namespace ShimZip {
          int fileCount = br.ReadInt32();
          for (int i=0; i<fileCount; i++) {
             string fileName = br.ReadString();
-            int fileLength = br.ReadInt32();
-            int fileOffset = (int)br.BaseStream.Position;
+            long fileLength = br.ReadInt64();
+            long fileOffset = br.BaseStream.Position;
             br.BaseStream.Seek(fileLength, SeekOrigin.Current);
             
             FileData fileData = new FileData(fileName, fileOffset, fileLength);
@@ -101,9 +107,7 @@ namespace ShimZip {
          // files
          foreach (var fileData in fileDatas) {
             string filePath = dir + "\\" + fileData.name;
-            br.BaseStream.Seek(fileData.offset, SeekOrigin.Begin);
-            byte[] data = br.ReadBytes((int)fileData.length);
-            File.WriteAllBytes(filePath, data);
+            StreamToFile(br, fileData.offset, fileData.length, filePath);
          }
 
          // dirs
@@ -113,6 +117,14 @@ namespace ShimZip {
          }
 
          return fileCnt;
+      }
+
+      // stream => file
+      public static void StreamToFile(BinaryReader br, long offset, long length, string filePath) {
+         // todo: long length file?
+         br.BaseStream.Seek(offset, SeekOrigin.Begin);
+         byte[] data = br.ReadBytes((int)length);
+         File.WriteAllBytes(filePath, data);
       }
    }
 
@@ -125,9 +137,9 @@ namespace ShimZip {
 
    public class FileData {
       public string name;
-      public int offset;
+      public long offset;
       public long length;
-      public FileData(string name, int offset, long length) {
+      public FileData(string name, long offset, long length) {
          this.name = name;
          this.offset = offset;
          this.length = length;
