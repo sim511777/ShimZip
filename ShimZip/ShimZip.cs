@@ -72,19 +72,19 @@ namespace ShimZip {
       }
 
       // ==== read zip file structure ====
-      // zip file => zipData struct
+      // zip file => DirData struct
       public static ZipData GetZipData(BinaryReader br) {
-         // todo: header check
-         byte[] header = br.ReadBytes(4);
-         short version = br.ReadInt16();
-         
          ZipData zipData = new ZipData();
-         GetZipDataRecursive(zipData, br);
+         zipData.header = br.ReadBytes(4);
+         zipData.version = br.ReadInt16();
+         
+         zipData.dirData = new DirData();
+         GetDirDataRecursive(zipData.dirData, br);
          return zipData;
       }
 
       // recursive
-      private static void GetZipDataRecursive(ZipData zipData, BinaryReader br) {
+      private static void GetDirDataRecursive(DirData dirData, BinaryReader br) {
          // files
          int fileCount = br.ReadInt32();
          for (int i=0; i<fileCount; i++) {
@@ -97,7 +97,7 @@ namespace ShimZip {
             br.BaseStream.Seek(fileLength, SeekOrigin.Current);
             
             FileData fileData = new FileData(fileName, fileOffset, fileLength, creationTimeUtc, lastAccessTimeUtc, lastWriteTimeUtc);
-            zipData.fileDatas.Add(fileData);
+            dirData.fileDatas.Add(fileData);
          }
 
          // dirs
@@ -107,9 +107,9 @@ namespace ShimZip {
             DateTime creationTimeUtc = DateTime.FromBinary(br.ReadInt64());
             DateTime lastAccessTimeUtc = DateTime.FromBinary(br.ReadInt64());
             DateTime lastWriteTimeUtc = DateTime.FromBinary(br.ReadInt64());
-            DirData dirData = new DirData(dirName, creationTimeUtc, lastAccessTimeUtc, lastWriteTimeUtc);
-            zipData.dirDatas.Add(dirData);
-            GetZipDataRecursive(dirData, br);
+            DirData subDirData = new DirData(dirName, creationTimeUtc, lastAccessTimeUtc, lastWriteTimeUtc);
+            dirData.dirDatas.Add(subDirData);
+            GetDirDataRecursive(subDirData, br);
          }
       }
 
@@ -167,17 +167,20 @@ namespace ShimZip {
    }
 
    public class ZipData {
-      public List<FileData> fileDatas = new List<FileData>();
-      public List<DirData> dirDatas = new List<DirData>();
+      public byte[] header;
+      public short version;
+      public DirData dirData;
    }
 
    public class FileData {
       public string name;
-      public long offset;
       public long length;
       public DateTime creationTimeUtc;
       public DateTime lastAccessTimeUtc;
       public DateTime lastWriteTimeUtc;
+
+      public long offset;
+
       public FileData(string name, long offset, long length, DateTime creationTimeUtc, DateTime lastAccessTimeUtc, DateTime lastWriteTimeUtc) {
          this.name = name;
          this.offset = offset;
@@ -188,11 +191,18 @@ namespace ShimZip {
       }
    }
 
-   public class DirData : ZipData {
+   public class DirData {
       public string name;
       public DateTime creationTimeUtc;
       public DateTime lastAccessTimeUtc;
       public DateTime lastWriteTimeUtc;
+
+      public List<FileData> fileDatas = new List<FileData>();
+      public List<DirData> dirDatas = new List<DirData>();
+
+      public DirData() {
+      }
+
       public DirData(string name, DateTime creationTimeUtc, DateTime lastAccessTimeUtc, DateTime lastWriteTimeUtc) {
          this.name = name;
          this.creationTimeUtc = creationTimeUtc;

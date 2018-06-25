@@ -18,19 +18,19 @@ namespace ShimZip {
 
       private BinaryReader br;
 
-      // zipData -> tree
-      private void ZipToTree(string zipFileName, ZipData zipData) {
+      // dirData -> tree
+      private void ZipToTree(ZipData zipData, string rootName) {
          this.trvZip.Nodes.Clear();
-         var node = this.trvZip.Nodes.Add(zipFileName);
-         node.Tag = zipData;
-         this.DirDataToTree(zipData, node.Nodes);
+         var node = this.trvZip.Nodes.Add(rootName);
+         node.Tag = zipData.dirData;
+         this.DirDataToTree(zipData.dirData, node.Nodes);
 
          this.trvZip.SelectedNode = node;
          node.Expand();
       }
 
       // dirData -> tree recursive
-      private void DirDataToTree(ZipData dirData, TreeNodeCollection nodes) {
+      private void DirDataToTree(DirData dirData, TreeNodeCollection nodes) {
          foreach (var subDir in dirData.dirDatas) {
             var node = nodes.Add(subDir.name);
             node.Tag = subDir;
@@ -69,7 +69,7 @@ namespace ShimZip {
          var zipData = ShimZip.GetZipData(this.br);
 
          string zipFileName = Path.GetFileName(zipFilePath);
-         this.ZipToTree(zipFileName, zipData);
+         this.ZipToTree(zipData, Path.GetFileName(zipFilePath));
       }
 
       private void trvZip_AfterSelect(object sender, TreeViewEventArgs e) {
@@ -77,14 +77,13 @@ namespace ShimZip {
          string format = "g";
          this.lvwFiles.BeginUpdate();
          this.lvwFiles.Items.Clear();
-         ZipData zipData = e.Node.Tag as ZipData;
-         foreach (var dirData in zipData.dirDatas) {
-            string[] subItems = new string[] { dirData.name, "[DIR]", string.Empty, dirData.creationTimeUtc.ToLocalTime().ToString(format, culture), dirData.lastAccessTimeUtc.ToLocalTime().ToString(format, culture), dirData.lastWriteTimeUtc.ToLocalTime().ToString(format, culture) };
+         DirData dirData = e.Node.Tag as DirData;
+         foreach (var subDirData in dirData.dirDatas) {
+            string[] subItems = new string[] { subDirData.name, "[DIR]", string.Empty, subDirData.creationTimeUtc.ToLocalTime().ToString(format, culture), subDirData.lastAccessTimeUtc.ToLocalTime().ToString(format, culture), subDirData.lastWriteTimeUtc.ToLocalTime().ToString(format, culture) };
             var item = this.lvwFiles.Items.Add(new ListViewItem(subItems));
-            item.Tag = dirData;
-            item.Tag = dirData;
+            item.Tag = subDirData;
          }
-         foreach (var fileData in zipData.fileDatas) {
+         foreach (var fileData in dirData.fileDatas) {
             var ext = Path.GetExtension(fileData.name);
             string[] subItems = new string[] { fileData.name, ext, fileData.length.ToString(), fileData.creationTimeUtc.ToLocalTime().ToString(format, culture), fileData.lastAccessTimeUtc.ToLocalTime().ToString(format, culture), fileData.lastWriteTimeUtc.ToLocalTime().ToString(format, culture) };
             var item = this.lvwFiles.Items.Add(new ListViewItem(subItems));
@@ -97,8 +96,8 @@ namespace ShimZip {
          if (this.br == null || this.trvZip.Nodes.Count == 0)
             return;
 
-         var zipData = this.trvZip.Nodes[0].Tag as ZipData;
-         if (zipData == null)
+         var dirData = this.trvZip.Nodes[0].Tag as DirData;
+         if (dirData == null)
             return;
 
          if (this.dlgFolder.ShowDialog(this) != DialogResult.OK)
@@ -106,7 +105,7 @@ namespace ShimZip {
          string unzipDir = this.dlgFolder.SelectedPath;
 
          var t1 = DateTime.Now;
-         int fileCnt = ShimZip.UnzipFile(zipData.fileDatas, zipData.dirDatas, this.br, unzipDir);
+         int fileCnt = ShimZip.UnzipFile(dirData.fileDatas, dirData.dirDatas, this.br, unzipDir);
          var dt = DateTime.Now - t1;
 
          MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
