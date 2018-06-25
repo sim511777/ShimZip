@@ -87,14 +87,14 @@
          // 
          // dlgSave
          // 
-         this.dlgSave.DefaultExt = "szip";
-         this.dlgSave.Filter = "Shim Zip FIile|*.szip";
+         this.dlgSave.DefaultExt = "sip";
+         this.dlgSave.Filter = "Shim Zip FIile|*.sip";
          // 
          // dlgOpen
          // 
-         this.dlgOpen.DefaultExt = "szip";
-         this.dlgOpen.FileName = "openFileDialog1";
-         this.dlgOpen.Filter = "Shim Zip FIile|*.szip";
+         this.dlgOpen.DefaultExt = "sip";
+         this.dlgOpen.FileName = "Noname.sip";
+         this.dlgOpen.Filter = "Shim Zip FIile|*.sip";
          // 
          // trvZip
          // 

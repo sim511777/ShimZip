@@ -45,7 +45,7 @@ namespace ShimZip {
          string dir = this.dlgFolder.SelectedPath;
 
          this.dlgSave.InitialDirectory = Path.GetDirectoryName(dir);
-         this.dlgSave.FileName = Path.GetFileName(dir) + ".szip";
+         this.dlgSave.FileName = Path.GetFileName(dir) + ".sip";
          if (this.dlgSave.ShowDialog(this) != DialogResult.OK)
             return;
          string zipFilePath = this.dlgSave.FileName;
