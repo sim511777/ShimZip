@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Globalization;
+using System.Security.AccessControl;
 
 namespace ShimZip {
    class ShimZip {
+      // ==== write zip file ====
       // file/dirs => zip file
       public static int ZipFile(string[] files, string[] dirs, string zipFilePath) {
          var sr = File.OpenWrite(zipFilePath);
@@ -32,6 +35,9 @@ namespace ShimZip {
             FileInfo fi = new FileInfo(file);
             bw.Write(fi.Name);
             bw.Write(fi.Length);
+            bw.Write(fi.CreationTimeUtc.ToBinary());
+            bw.Write(fi.LastAccessTimeUtc.ToBinary());
+            bw.Write(fi.LastWriteTimeUtc.ToBinary());
             FileToStream(file, bw);
          }
 
@@ -40,6 +46,10 @@ namespace ShimZip {
          foreach (var dir in dirs) {
             DirectoryInfo di = new DirectoryInfo(dir);
             bw.Write(di.Name);
+            bw.Write(di.CreationTimeUtc.ToBinary());
+            bw.Write(di.LastAccessTimeUtc.ToBinary());
+            bw.Write(di.LastWriteTimeUtc.ToBinary());
+
             var subFiles = Directory.GetFiles(dir);
             var subDirs = Directory.GetDirectories(dir);
             fileCnt += ZipFileRecursive(subFiles, subDirs, bw);
@@ -55,6 +65,7 @@ namespace ShimZip {
          bw.Write(data);
       }
 
+      // ==== read zip file structure ====
       // zip file => zipData struct
       public static ZipData GetZipData(BinaryReader br) {
          ZipData zipData = new ZipData();
@@ -74,10 +85,13 @@ namespace ShimZip {
          for (int i=0; i<fileCount; i++) {
             string fileName = br.ReadString();
             long fileLength = br.ReadInt64();
+            DateTime creationTimeUtc = DateTime.FromBinary(br.ReadInt64());
+            DateTime lastAccessTimeUtc = DateTime.FromBinary(br.ReadInt64());
+            DateTime lastWriteTimeUtc = DateTime.FromBinary(br.ReadInt64());
             long fileOffset = br.BaseStream.Position;
             br.BaseStream.Seek(fileLength, SeekOrigin.Current);
             
-            FileData fileData = new FileData(fileName, fileOffset, fileLength);
+            FileData fileData = new FileData(fileName, fileOffset, fileLength, creationTimeUtc, lastAccessTimeUtc, lastWriteTimeUtc);
             zipData.fileDatas.Add(fileData);
          }
 
@@ -85,13 +99,16 @@ namespace ShimZip {
          int dirCount = br.ReadInt32();
          for (int i=0; i<dirCount; i++) {
             string dirName = br.ReadString();
-
-            DirData dirData = new DirData(dirName);
+            DateTime creationTimeUtc = DateTime.FromBinary(br.ReadInt64());
+            DateTime lastAccessTimeUtc = DateTime.FromBinary(br.ReadInt64());
+            DateTime lastWriteTimeUtc = DateTime.FromBinary(br.ReadInt64());
+            DirData dirData = new DirData(dirName, creationTimeUtc, lastAccessTimeUtc, lastWriteTimeUtc);
             zipData.dirDatas.Add(dirData);
             GetZipDataRecursive(dirData, br);
          }
       }
 
+      // zip file extract 
       // file/dirs => zip file
       public static int UnzipFile(List<FileData> fileDatas, List<DirData> dirDatas, BinaryReader br, string unzipDir) {
          return UnzipFileRecursive(fileDatas, dirDatas, br, unzipDir);
@@ -107,7 +124,7 @@ namespace ShimZip {
          // files
          foreach (var fileData in fileDatas) {
             string filePath = dir + "\\" + fileData.name;
-            StreamToFile(br, fileData.offset, fileData.length, filePath);
+            StreamToFile(br, fileData, filePath);
          }
 
          // dirs
@@ -120,11 +137,14 @@ namespace ShimZip {
       }
 
       // stream => file
-      public static void StreamToFile(BinaryReader br, long offset, long length, string filePath) {
+      public static void StreamToFile(BinaryReader br, FileData fileData, string filePath) {
          // todo: long length file?
-         br.BaseStream.Seek(offset, SeekOrigin.Begin);
-         byte[] data = br.ReadBytes((int)length);
+         br.BaseStream.Seek(fileData.offset, SeekOrigin.Begin);
+         byte[] data = br.ReadBytes((int)fileData.length);
          File.WriteAllBytes(filePath, data);
+         File.SetCreationTimeUtc(filePath, fileData.creationTimeUtc);
+         File.SetLastAccessTimeUtc(filePath, fileData.lastAccessTimeUtc);
+         File.SetLastWriteTimeUtc(filePath, fileData.lastWriteTimeUtc);
       }
    }
 
@@ -139,17 +159,30 @@ namespace ShimZip {
       public string name;
       public long offset;
       public long length;
-      public FileData(string name, long offset, long length) {
+      public DateTime creationTimeUtc;
+      public DateTime lastAccessTimeUtc;
+      public DateTime lastWriteTimeUtc;
+      public FileData(string name, long offset, long length, DateTime creationTimeUtc, DateTime lastAccessTimeUtc, DateTime lastWriteTimeUtc) {
          this.name = name;
          this.offset = offset;
          this.length = length;
+         this.creationTimeUtc = creationTimeUtc;
+         this.lastAccessTimeUtc = lastAccessTimeUtc;
+         this.lastWriteTimeUtc = lastWriteTimeUtc;
       }
    }
 
    public class DirData : ZipData {
       public string name;
-      public DirData(string name) {
+      public DateTime creationTimeUtc;
+      public DateTime lastAccessTimeUtc;
+      public DateTime lastWriteTimeUtc;
+      public FileSystemInfo info;
+      public DirData(string name, DateTime creationTimeUtc, DateTime lastAccessTimeUtc, DateTime lastWriteTimeUtc) {
          this.name = name;
+         this.creationTimeUtc = creationTimeUtc;
+         this.lastAccessTimeUtc = lastAccessTimeUtc;
+         this.lastWriteTimeUtc = lastWriteTimeUtc;
       }
    }
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Globalization;
 
 namespace ShimZip {
    public partial class FormMain : Form {
@@ -69,16 +70,19 @@ namespace ShimZip {
       }
 
       private void trvZip_AfterSelect(object sender, TreeViewEventArgs e) {
+         CultureInfo culture = CultureInfo.CreateSpecificCulture("ko-KR");
+         string format = "g";
          this.lvwFiles.Items.Clear();
          ZipData zipData = e.Node.Tag as ZipData;
          foreach (var dirData in zipData.dirDatas) {
-            string[] subItems = new string[] { dirData.name, "[DIR]", string.Empty };
+            string[] subItems = new string[] { dirData.name, "[DIR]", string.Empty, string.Empty, dirData.creationTimeUtc.ToLocalTime().ToString(format, culture), dirData.lastAccessTimeUtc.ToLocalTime().ToString(format, culture), dirData.lastWriteTimeUtc.ToLocalTime().ToString(format, culture) };
             var item = this.lvwFiles.Items.Add(new ListViewItem(subItems));
+            item.Tag = dirData;
             item.Tag = dirData;
          }
          foreach (var fileData in zipData.fileDatas) {
             var ext = Path.GetExtension(fileData.name);
-            string[] subItems = new string[] { fileData.name, ext, fileData.length.ToString() };
+            string[] subItems = new string[] { fileData.name, ext, fileData.length.ToString(), fileData.creationTimeUtc.ToLocalTime().ToString(format, culture), fileData.lastAccessTimeUtc.ToLocalTime().ToString(format, culture), fileData.lastWriteTimeUtc.ToLocalTime().ToString(format, culture) };
             var item = this.lvwFiles.Items.Add(new ListViewItem(subItems));
             item.Tag = fileData;
          }
