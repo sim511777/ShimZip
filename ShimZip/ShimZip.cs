@@ -9,6 +9,8 @@ using System.Security.AccessControl;
 
 namespace ShimZip {
    class ShimZip {
+      public const int BlockSize = 1000000;
+
       // ==== write zip file ====
       // file/dirs => zip file
       public static int ZipFile(string[] files, string[] dirs, string zipFilePath) {
@@ -60,6 +62,15 @@ namespace ShimZip {
 
       // file => stream
       private static void FileToStream(string filePath, BinaryWriter bw) {
+         //byte[] blockBuf = new byte[BlockSize];
+         //using (var stream = File.OpenRead(filePath)) {
+         //   var br = new BinaryReader(stream);
+         //   int readSize;
+         //   while ((readSize = stream.Read(blockBuf, 0, BlockSize)) > 0) {
+         //      bw.Write(blockBuf, 0, readSize);
+         //   }
+         //}
+
          // todo: long length file?
          byte[] data = File.ReadAllBytes(filePath);
          bw.Write(data);
@@ -115,9 +126,15 @@ namespace ShimZip {
       }
 
       // recursive
-      private static int UnzipFileRecursive(List<FileData> fileDatas, List<DirData> dirDatas, BinaryReader br, string dir) {
-         if (Directory.Exists(dir) == false)
+      private static int UnzipFileRecursive(List<FileData> fileDatas, List<DirData> dirDatas, BinaryReader br, string dir, DirData dirData = null) {
+         if (Directory.Exists(dir) == false) {
             Directory.CreateDirectory(dir);
+            if (dirData != null) {
+               Directory.SetCreationTimeUtc(dir, dirData.creationTimeUtc);
+               Directory.SetLastAccessTimeUtc(dir, dirData.lastAccessTimeUtc);
+               Directory.SetLastWriteTimeUtc(dir, dirData.lastWriteTimeUtc); 
+            }
+         }
 
          int fileCnt = fileDatas.Count;
          
@@ -128,9 +145,9 @@ namespace ShimZip {
          }
 
          // dirs
-         foreach (var dirData in dirDatas) {
-            string subDir = dir + "\\" + dirData.name;
-            fileCnt += UnzipFileRecursive(dirData.fileDatas, dirData.dirDatas, br, subDir);
+         foreach (var subDirData in dirDatas) {
+            string subDir = dir + "\\" + subDirData.name;
+            fileCnt += UnzipFileRecursive(subDirData.fileDatas, subDirData.dirDatas, br, subDir, subDirData);
          }
 
          return fileCnt;
@@ -138,10 +155,21 @@ namespace ShimZip {
 
       // stream => file
       public static void StreamToFile(BinaryReader br, FileData fileData, string filePath) {
+         //byte[] blockBuf = new byte[BlockSize];
+         //using (var stream = File.Create(filePath)) {
+         //   long remains = fileData.length;
+         //   while (remains > 0) {
+         //      int readSize = br.Read(blockBuf, 0, (remains >= BlockSize) ? BlockSize : (int)remains);
+         //      stream.Write(blockBuf, 0, readSize);
+         //      remains -= readSize;
+         //   }
+         //}
+
          // todo: long length file?
          br.BaseStream.Seek(fileData.offset, SeekOrigin.Begin);
          byte[] data = br.ReadBytes((int)fileData.length);
          File.WriteAllBytes(filePath, data);
+
          File.SetCreationTimeUtc(filePath, fileData.creationTimeUtc);
          File.SetLastAccessTimeUtc(filePath, fileData.lastAccessTimeUtc);
          File.SetLastWriteTimeUtc(filePath, fileData.lastWriteTimeUtc);

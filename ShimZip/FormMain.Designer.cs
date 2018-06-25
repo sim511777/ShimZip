@@ -37,10 +37,10 @@
          this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-         this.statusStrip1 = new System.Windows.Forms.StatusStrip();
          this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+         this.statusStrip1 = new System.Windows.Forms.StatusStrip();
          this.menuStrip1.SuspendLayout();
          this.SuspendLayout();
          // 
@@ -150,6 +150,21 @@
          this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
          this.columnHeader3.Width = 77;
          // 
+         // columnHeader5
+         // 
+         this.columnHeader5.Text = "create time";
+         this.columnHeader5.Width = 130;
+         // 
+         // columnHeader6
+         // 
+         this.columnHeader6.Text = "last access time";
+         this.columnHeader6.Width = 130;
+         // 
+         // columnHeader7
+         // 
+         this.columnHeader7.Text = "last write time";
+         this.columnHeader7.Width = 130;
+         // 
          // statusStrip1
          // 
          this.statusStrip1.Location = new System.Drawing.Point(0, 557);
@@ -157,21 +172,6 @@
          this.statusStrip1.Size = new System.Drawing.Size(1205, 22);
          this.statusStrip1.TabIndex = 4;
          this.statusStrip1.Text = "statusStrip1";
-         // 
-         // columnHeader5
-         // 
-         this.columnHeader5.Text = "create time";
-         this.columnHeader5.Width = 115;
-         // 
-         // columnHeader6
-         // 
-         this.columnHeader6.Text = "last access time";
-         this.columnHeader6.Width = 120;
-         // 
-         // columnHeader7
-         // 
-         this.columnHeader7.Text = "last write time";
-         this.columnHeader7.Width = 125;
          // 
          // FormMain
          // 

@@ -52,9 +52,12 @@ namespace ShimZip {
 
          var files = Directory.GetFiles(dir);
          var dirs = Directory.GetDirectories(dir);
+
+         var t1 = DateTime.Now;
          int fileCnt = ShimZip.ZipFile(files, dirs, zipFilePath);
+         var dt = DateTime.Now - t1;
          
-         MessageBox.Show($"{fileCnt} files ziped to {zipFilePath}");
+         MessageBox.Show($"{fileCnt} files ziped to {zipFilePath}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
       }
 
       private void OpenToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -72,6 +75,7 @@ namespace ShimZip {
       private void trvZip_AfterSelect(object sender, TreeViewEventArgs e) {
          CultureInfo culture = CultureInfo.CreateSpecificCulture("ko-KR");
          string format = "g";
+         this.lvwFiles.BeginUpdate();
          this.lvwFiles.Items.Clear();
          ZipData zipData = e.Node.Tag as ZipData;
          foreach (var dirData in zipData.dirDatas) {
@@ -86,6 +90,7 @@ namespace ShimZip {
             var item = this.lvwFiles.Items.Add(new ListViewItem(subItems));
             item.Tag = fileData;
          }
+         this.lvwFiles.EndUpdate();
       }
 
       private void extractAllToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -100,8 +105,11 @@ namespace ShimZip {
             return;
          string unzipDir = this.dlgFolder.SelectedPath;
 
+         var t1 = DateTime.Now;
          int fileCnt = ShimZip.UnzipFile(zipData.fileDatas, zipData.dirDatas, this.br, unzipDir);
-         MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.");
+         var dt = DateTime.Now - t1;
+
+         MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
       }
 
       private void exractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -118,7 +126,10 @@ namespace ShimZip {
          string unzipDir = this.dlgFolder.SelectedPath;
 
          int fileCnt = ShimZip.UnzipFile(fileDatas, dirDatas, this.br, unzipDir);
-         MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.");
+         var t1 = DateTime.Now;
+         var dt = DateTime.Now - t1;
+
+         MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
       }
    }
 }
