@@ -101,13 +101,17 @@ namespace ShimZip {
       }
 
       private void exractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
-         if (this.dlgFolder.ShowDialog(this) != DialogResult.OK)
-            return;
-         string unzipDir = this.dlgFolder.SelectedPath;
-
          var selItems = this.lvwFiles.SelectedItems.Cast<ListViewItem>();
+         if (selItems.Count() == 0)
+            return;
+
          var fileDatas = selItems.Where(item => item.Tag is FileData).Select(item => item.Tag as FileData).ToList();
          var dirDatas = selItems.Where(item => item.Tag is DirData).Select(item => item.Tag as DirData).ToList();
+
+         if (this.dlgFolder.ShowDialog(this) != DialogResult.OK)
+            return;
+
+         string unzipDir = this.dlgFolder.SelectedPath;
 
          int fileCnt = ShimZip.UnzipFile(fileDatas, dirDatas, this.br, unzipDir);
          MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.");
