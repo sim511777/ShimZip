@@ -196,7 +196,6 @@ namespace ShimZip {
       public DateTime creationTimeUtc;
       public DateTime lastAccessTimeUtc;
       public DateTime lastWriteTimeUtc;
-      public FileSystemInfo info;
       public DirData(string name, DateTime creationTimeUtc, DateTime lastAccessTimeUtc, DateTime lastWriteTimeUtc) {
          this.name = name;
          this.creationTimeUtc = creationTimeUtc;
