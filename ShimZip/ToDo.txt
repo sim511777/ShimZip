@@ -10,27 +10,34 @@ ok - 생성시간,수정시간,마지막access시간
 ok 5. 파일 크기, 파일 개수 int 에서 long 으로 변경
 6. 탐색기 연동
   - 한개 일때
+    
     - 압축파일
-      - 여기에 풀기
-      - 알아서 풀기
-      - 파일명 폴더에 풀기
-      - 반디집으로 풀기
+      - 여기에 풀기 -x -here "aaa.sip"
+      - 알아서 풀기 -x -auto "aaa.sip"
+      - 파일명 폴더에 풀기 -x -filedir "aaa.sip"
+      - 반디집으로 풀기 -x -dirdlg "aaa.sip"
+      - 반디집으로 열기 -x -shimzip
+    
     - 일반파일
-      - 파일명.zip으로 압축하기
-      - 반디집으로 압축하기
+      - 파일명.zip으로 압축하기 -a -filename "aaa.txt"
+      - 반디집으로 압축하기 -a -filedlg "aaa.txt"
+  
   - 두개 이상 일때
+    
     - 모두 압축파일
-      - 여기에 풀기
-      - 각각 알아서 풀기
-      - 각각 파일명 폴더에 풀기
-      - 반디집으로 풀기
-      - 폴더명.zip으로 압축하기
-      - 각각 파일명.zip으로 압축하기
-      - 반디집으로 압축하기
+      - 여기에 풀기 -x -here "aaa.sip" "bbb.sip"
+      - 각각 알아서 풀기 -x -auto "aaa.sip" "bbb.sip"
+      - 각각 파일명 폴더에 풀기 -x -filedir "aaa.sip" "bbb.sip"
+      - 반디집으로 풀기 -x -dirdlg "aaa.sip" "bbb.sip"
+      
+      - 폴더명.zip으로 압축하기 -a -dirname "aaa.sip" "bbb.sip"
+      - 각각 파일명.zip으로 압축하기 -a -filename "aaa.sip" "bbb.sip"
+      - 반디집으로 압축하기 -a -filedlg "aaa.sip" "bbb.sip"
+    
     - 하나라도 일반파일
-      - 폴더명.zip으로 압축하기
-      - 각각 파일명.zip으로 압축하기
-      - 반디집으로 압축하기
+      - 폴더명.zip으로 압축하기 -a -dirname "aaa.txt" "bbb.txt"
+      - 각각 파일명.zip으로 압축하기 -a -filename "aaa.txt" "bbb.txt"
+      - 반디집으로 압축하기 -a -filedlg "aaa.txt" "bbb.txt"
 5. 비동기 인코딩/디코딩
   - thread
 6. 예외 처리
