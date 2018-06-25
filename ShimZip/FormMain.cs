@@ -75,7 +75,7 @@ namespace ShimZip {
          this.lvwFiles.Items.Clear();
          ZipData zipData = e.Node.Tag as ZipData;
          foreach (var dirData in zipData.dirDatas) {
-            string[] subItems = new string[] { dirData.name, "[DIR]", string.Empty, string.Empty, dirData.creationTimeUtc.ToLocalTime().ToString(format, culture), dirData.lastAccessTimeUtc.ToLocalTime().ToString(format, culture), dirData.lastWriteTimeUtc.ToLocalTime().ToString(format, culture) };
+            string[] subItems = new string[] { dirData.name, "[DIR]", string.Empty, dirData.creationTimeUtc.ToLocalTime().ToString(format, culture), dirData.lastAccessTimeUtc.ToLocalTime().ToString(format, culture), dirData.lastWriteTimeUtc.ToLocalTime().ToString(format, culture) };
             var item = this.lvwFiles.Items.Add(new ListViewItem(subItems));
             item.Tag = dirData;
             item.Tag = dirData;
