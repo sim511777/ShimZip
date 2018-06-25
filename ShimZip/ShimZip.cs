@@ -9,7 +9,7 @@ using System.Security.AccessControl;
 
 namespace ShimZip {
    class ShimZip {
-      public const int BlockSize = 1000000;
+      private const int BlockSize = 1000000;
 
       // ==== write zip file ====
       // file/dirs => zip file
@@ -40,7 +40,7 @@ namespace ShimZip {
             bw.Write(fi.CreationTimeUtc.ToBinary());
             bw.Write(fi.LastAccessTimeUtc.ToBinary());
             bw.Write(fi.LastWriteTimeUtc.ToBinary());
-            FileToStream(file, bw);
+            EncodeFile(file, bw);
          }
 
          // dirs
@@ -61,7 +61,7 @@ namespace ShimZip {
       }
 
       // file => stream
-      private static void FileToStream(string filePath, BinaryWriter bw) {
+      private static void EncodeFile(string filePath, BinaryWriter bw) {
          using (var stream = File.OpenRead(filePath)) {
             byte[] blockBuf = new byte[BlockSize];
             int readSize;
@@ -74,12 +74,11 @@ namespace ShimZip {
       // ==== read zip file structure ====
       // zip file => zipData struct
       public static ZipData GetZipData(BinaryReader br) {
+         // todo: header check
+         byte[] header = br.ReadBytes(4);
+         short version = br.ReadInt16();
+         
          ZipData zipData = new ZipData();
-         
-         // header
-         zipData.header = br.ReadBytes(4);
-         zipData.version = br.ReadInt16();
-         
          GetZipDataRecursive(zipData, br);
          return zipData;
       }
@@ -136,7 +135,7 @@ namespace ShimZip {
          // files
          foreach (var fileData in fileDatas) {
             string filePath = dir + "\\" + fileData.name;
-            StreamToFile(br, fileData, filePath);
+            DecodeFile(br, fileData, filePath);
          }
 
          // dirs
@@ -149,7 +148,7 @@ namespace ShimZip {
       }
 
       // stream => file
-      public static void StreamToFile(BinaryReader br, FileData fileData, string filePath) {
+      private static void DecodeFile(BinaryReader br, FileData fileData, string filePath) {
          br.BaseStream.Seek(fileData.offset, SeekOrigin.Begin);
          using (var stream = File.Create(filePath)) {
             byte[] blockBuf = new byte[BlockSize];
@@ -168,8 +167,6 @@ namespace ShimZip {
    }
 
    public class ZipData {
-      public byte[] header;
-      public short version;
       public List<FileData> fileDatas = new List<FileData>();
       public List<DirData> dirDatas = new List<DirData>();
    }
