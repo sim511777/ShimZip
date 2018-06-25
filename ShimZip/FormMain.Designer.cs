@@ -153,17 +153,17 @@
          // columnHeader5
          // 
          this.columnHeader5.Text = "create time";
-         this.columnHeader5.Width = 130;
+         this.columnHeader5.Width = 140;
          // 
          // columnHeader6
          // 
          this.columnHeader6.Text = "last access time";
-         this.columnHeader6.Width = 130;
+         this.columnHeader6.Width = 140;
          // 
          // columnHeader7
          // 
          this.columnHeader7.Text = "last write time";
-         this.columnHeader7.Width = 130;
+         this.columnHeader7.Width = 140;
          // 
          // statusStrip1
          // 

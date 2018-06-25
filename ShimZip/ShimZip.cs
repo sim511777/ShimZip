@@ -62,18 +62,13 @@ namespace ShimZip {
 
       // file => stream
       private static void FileToStream(string filePath, BinaryWriter bw) {
-         //byte[] blockBuf = new byte[BlockSize];
-         //using (var stream = File.OpenRead(filePath)) {
-         //   var br = new BinaryReader(stream);
-         //   int readSize;
-         //   while ((readSize = stream.Read(blockBuf, 0, BlockSize)) > 0) {
-         //      bw.Write(blockBuf, 0, readSize);
-         //   }
-         //}
-
-         // todo: long length file?
-         byte[] data = File.ReadAllBytes(filePath);
-         bw.Write(data);
+         using (var stream = File.OpenRead(filePath)) {
+            byte[] blockBuf = new byte[BlockSize];
+            int readSize;
+            while ((readSize = stream.Read(blockBuf, 0, BlockSize)) > 0) {
+               bw.Write(blockBuf, 0, readSize);
+            }
+         }
       }
 
       // ==== read zip file structure ====
@@ -132,7 +127,7 @@ namespace ShimZip {
             if (dirData != null) {
                Directory.SetCreationTimeUtc(dir, dirData.creationTimeUtc);
                Directory.SetLastAccessTimeUtc(dir, dirData.lastAccessTimeUtc);
-               Directory.SetLastWriteTimeUtc(dir, dirData.lastWriteTimeUtc); 
+               Directory.SetLastWriteTimeUtc(dir, dirData.lastWriteTimeUtc);
             }
          }
 
@@ -155,20 +150,16 @@ namespace ShimZip {
 
       // stream => file
       public static void StreamToFile(BinaryReader br, FileData fileData, string filePath) {
-         //byte[] blockBuf = new byte[BlockSize];
-         //using (var stream = File.Create(filePath)) {
-         //   long remains = fileData.length;
-         //   while (remains > 0) {
-         //      int readSize = br.Read(blockBuf, 0, (remains >= BlockSize) ? BlockSize : (int)remains);
-         //      stream.Write(blockBuf, 0, readSize);
-         //      remains -= readSize;
-         //   }
-         //}
-
-         // todo: long length file?
          br.BaseStream.Seek(fileData.offset, SeekOrigin.Begin);
-         byte[] data = br.ReadBytes((int)fileData.length);
-         File.WriteAllBytes(filePath, data);
+         using (var stream = File.Create(filePath)) {
+            byte[] blockBuf = new byte[BlockSize];
+            long remains = fileData.length;
+            while (remains > 0) {
+               int readSize = br.Read(blockBuf, 0, (remains >= BlockSize) ? BlockSize : (int)remains);
+               stream.Write(blockBuf, 0, readSize);
+               remains -= readSize;
+            }
+         }
 
          File.SetCreationTimeUtc(filePath, fileData.creationTimeUtc);
          File.SetLastAccessTimeUtc(filePath, fileData.lastAccessTimeUtc);
