@@ -18,9 +18,9 @@ ok 5. 파일 크기, 파일 개수 int 에서 long 으로 변경
     - 압축파일
       - 여기에 풀기 -x -here "aaa.sip"
       - 알아서 풀기 -x -auto "aaa.sip"
-      - 파일명 폴더에 풀기 -x -filedir "aaa.sip"
+      - 파일명 폴더에 풀기 -x -filenamedir "aaa.sip"
       - 반디집으로 풀기 -x -dirdlg "aaa.sip"
-      - 반디집으로 열기 -o "aaa.sip"
+      - 반디집으로 열기 -x -open "aaa.sip"
     
     - 일반파일
       - 파일명.zip으로 압축하기 -a -filename "aaa.txt"
@@ -29,9 +29,9 @@ ok 5. 파일 크기, 파일 개수 int 에서 long 으로 변경
   - 두개 이상 일때
     
     - 모두 압축파일
-      - 여기에 풀기 -x -here "aaa.sip" "bbb.sip"
+      - 각각 여기에 풀기 -x -here "aaa.sip" "bbb.sip"
       - 각각 알아서 풀기 -x -auto "aaa.sip" "bbb.sip"
-      - 각각 파일명 폴더에 풀기 -x -filedir "aaa.sip" "bbb.sip"
+      - 각각 파일명 폴더에 풀기 -x -filenamedir "aaa.sip" "bbb.sip"
       - 반디집으로 풀기 -x -dirdlg "aaa.sip" "bbb.sip"
       
       - 폴더명.zip으로 압축하기 -a -dirname "aaa.sip" "bbb.sip"

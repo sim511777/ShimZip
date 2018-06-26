@@ -16,8 +16,7 @@ namespace ShimZip {
          if (args.Length == 0) {
             Application.Run(new FormMain());
          } else {
-            //CheckCommandFormatCorrect(args); // 명령줄 포멧이 맞는지 확인
-            //CheckCommandParamsValid(args);   // 파라미터가 유효한지 확인
+            CommandLine.Run(args);
          }
       }
    }
