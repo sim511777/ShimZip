@@ -16,6 +16,12 @@ namespace ShimZip {
          InitializeComponent();
       }
 
+      public FormMain(string[] args) {
+         InitializeComponent();
+         string zipFilePath = args[1];
+         this.OpenZipFile(zipFilePath);
+      }
+
       private BinaryReader br;
 
       // dirData -> tree
@@ -36,6 +42,14 @@ namespace ShimZip {
             node.Tag = subDir;
             this.DirDataToTree(subDir, node.Nodes);
          }
+      }
+
+      private void OpenZipFile(string zipFilePath) {
+         this.br = new BinaryReader(File.OpenRead(zipFilePath));
+         var zipData = ShimZip.GetZipData(this.br);
+
+         string zipFileName = Path.GetFileName(zipFilePath);
+         this.ZipToTree(zipData, Path.GetFileName(zipFilePath));
       }
 
       // == event handler
@@ -65,11 +79,7 @@ namespace ShimZip {
             return;
          
          string zipFilePath = this.dlgOpen.FileName;
-         this.br = new BinaryReader(File.OpenRead(zipFilePath));
-         var zipData = ShimZip.GetZipData(this.br);
-
-         string zipFileName = Path.GetFileName(zipFilePath);
-         this.ZipToTree(zipData, Path.GetFileName(zipFilePath));
+         this.OpenZipFile(zipFilePath);
       }
 
       private void trvZip_AfterSelect(object sender, TreeViewEventArgs e) {

@@ -15,8 +15,12 @@ namespace ShimZip {
          Application.SetCompatibleTextRenderingDefault(false);
          if (args.Length == 0) {
             Application.Run(new FormMain());
-         } else {
+         } else if (args[0] == "-o") {
+            Application.Run(new FormMain(args));
+         } else if (args[0] == "-x" || args[0] == "-a") {
             CommandLine.Run(args);
+         } else {
+
          }
       }
    }
