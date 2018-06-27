@@ -12,6 +12,7 @@ namespace ShimZip {
       private const int BlockSize = 1000000;
 
       // ==== write zip file ====
+      //public static ZipData GetZipData()
       // file/dirs => zip file
       public static int ZipFile(string[] files, string[] dirs, string zipFilePath) {
          var sr = File.OpenWrite(zipFilePath);
@@ -73,13 +74,16 @@ namespace ShimZip {
 
       // ==== read zip file structure ====
       // zip file => DirData struct
-      public static ZipData GetZipData(BinaryReader br) {
+      public static ZipData GetZipData(string zipFilePath) {
          ZipData zipData = new ZipData();
-         zipData.header = br.ReadBytes(4);
-         zipData.version = br.ReadInt16();
+         using (var sr = File.OpenRead(zipFilePath))
+         using (var br = new BinaryReader(sr)) {
+            zipData.header = br.ReadBytes(4);
+            zipData.version = br.ReadInt16();
          
-         zipData.dirData = new DirData();
-         GetDirDataRecursive(zipData.dirData, br);
+            zipData.dirData = new DirData();
+            GetDirDataRecursive(zipData.dirData, br);
+         }
          return zipData;
       }
 
@@ -115,8 +119,11 @@ namespace ShimZip {
 
       // zip file extract 
       // file/dirs => zip file
-      public static int UnzipFile(List<FileData> fileDatas, List<DirData> dirDatas, BinaryReader br, string unzipDir) {
-         return UnzipFileRecursive(fileDatas, dirDatas, br, unzipDir);
+      public static int UnzipFile(List<FileData> fileDatas, List<DirData> dirDatas, string zipFilePath, string unzipDir) {
+         using (var sr = File.OpenRead(zipFilePath))
+         using (var br = new BinaryReader(sr)) {
+            return UnzipFileRecursive(fileDatas, dirDatas, br, unzipDir);
+         }
       }
 
       // recursive

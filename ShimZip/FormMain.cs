@@ -21,7 +21,7 @@ namespace ShimZip {
          this.OpenZipFile(zipFilePath);
       }
 
-      private BinaryReader br;
+      private string zipFilePath;
 
       // dirData -> tree
       private void ZipToTree(ZipData zipData, string rootName) {
@@ -44,8 +44,8 @@ namespace ShimZip {
       }
 
       private void OpenZipFile(string zipFilePath) {
-         this.br = new BinaryReader(File.OpenRead(zipFilePath));
-         var zipData = ShimZip.GetZipData(this.br);
+         this.zipFilePath = zipFilePath;
+         var zipData = ShimZip.GetZipData(this.zipFilePath);
 
          string zipFileName = Path.GetFileName(zipFilePath);
          this.ZipToTree(zipData, Path.GetFileName(zipFilePath));
@@ -102,7 +102,7 @@ namespace ShimZip {
       }
 
       private void extractAllToolStripMenuItem_Click(object sender, EventArgs e) {
-         if (this.br == null || this.trvZip.Nodes.Count == 0)
+         if (this.zipFilePath == null || this.trvZip.Nodes.Count == 0)
             return;
 
          var dirData = this.trvZip.Nodes[0].Tag as DirData;
@@ -114,7 +114,7 @@ namespace ShimZip {
          string unzipDir = this.dlgFolder.SelectedPath;
 
          var t1 = DateTime.Now;
-         int fileCnt = ShimZip.UnzipFile(dirData.fileDatas, dirData.dirDatas, this.br, unzipDir);
+         int fileCnt = ShimZip.UnzipFile(dirData.fileDatas, dirData.dirDatas, this.zipFilePath, unzipDir);
          var dt = DateTime.Now - t1;
 
          MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
@@ -133,7 +133,7 @@ namespace ShimZip {
 
          string unzipDir = this.dlgFolder.SelectedPath;
 
-         int fileCnt = ShimZip.UnzipFile(fileDatas, dirDatas, this.br, unzipDir);
+         int fileCnt = ShimZip.UnzipFile(fileDatas, dirDatas, this.zipFilePath, unzipDir);
          var t1 = DateTime.Now;
          var dt = DateTime.Now - t1;
 
