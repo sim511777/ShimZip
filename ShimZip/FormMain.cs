@@ -45,7 +45,9 @@ namespace ShimZip {
 
       private void OpenZipFile(string zipFilePath) {
          this.zipFilePath = zipFilePath;
-         var zipData = ShimZip.GetZipData(this.zipFilePath);
+         int fileCnt = 0;
+         long totalByte = 0;
+         var zipData = ShimZip.GetZipData(this.zipFilePath, ref fileCnt, ref totalByte);
 
          string zipFileName = Path.GetFileName(zipFilePath);
          this.ZipToTree(zipData, Path.GetFileName(zipFilePath));
@@ -67,10 +69,13 @@ namespace ShimZip {
          var dirs = Directory.GetDirectories(dir);
 
          var t1 = DateTime.Now;
-         int fileCnt = ShimZip.ZipFile(files, dirs, zipFilePath);
+         int fileCnt = 0;
+         long totalByte = 0;
+         var zipData = ShimZip.MakeZipData(files, dirs, ref fileCnt, ref totalByte);
+         int encFileCnt = ShimZip.ZipFile(zipData, zipFilePath);
          var dt = DateTime.Now - t1;
          
-         MessageBox.Show($"{fileCnt} files ziped to {zipFilePath}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
+         MessageBox.Show($"{encFileCnt} files ziped to {zipFilePath}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
       }
 
       private void OpenToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -114,10 +119,10 @@ namespace ShimZip {
          string unzipDir = this.dlgFolder.SelectedPath;
 
          var t1 = DateTime.Now;
-         int fileCnt = ShimZip.UnzipFile(dirData.fileDatas, dirData.dirDatas, this.zipFilePath, unzipDir);
+         int decfileCnt = ShimZip.UnzipFile(dirData.fileDatas, dirData.dirDatas, this.zipFilePath, unzipDir);
          var dt = DateTime.Now - t1;
 
-         MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
+         MessageBox.Show($"{decfileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
       }
 
       private void exractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -133,11 +138,11 @@ namespace ShimZip {
 
          string unzipDir = this.dlgFolder.SelectedPath;
 
-         int fileCnt = ShimZip.UnzipFile(fileDatas, dirDatas, this.zipFilePath, unzipDir);
+         int decfileCnt = ShimZip.UnzipFile(fileDatas, dirDatas, this.zipFilePath, unzipDir);
          var t1 = DateTime.Now;
          var dt = DateTime.Now - t1;
 
-         MessageBox.Show($"{fileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
+         MessageBox.Show($"{decfileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
       }
    }
 }
