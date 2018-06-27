@@ -8,56 +8,68 @@ using System.Windows.Forms;
 namespace ShimZip {
    class CommandLine {
       public static void Run(string[] args) {
-         // 명령줄 포멧이 맞는지 확인
-         if (CheckCommandFormatCorrect(args) == false) {
-            string msg = string.Empty;
-            MessageBox.Show(msg);
-            return;
+         var a0 = args[0];
+         var a1 = args[1];
+         var filePaths = args.Skip(2).ToArray();
+         if (a0 == "-x") {
+            if (a1 == "-here")
+               ExtractHere(filePaths);
+            else if (a1 == "-auto")
+               ExtractAuto(filePaths);
+            else if (a1 == "-filenamedir")
+               ExtractFilenameDir(filePaths);
+            else if (a1 == "-dirdlg")
+               ExtractDirDlg(filePaths);
+         } else if (args[0] == "-a") {
+            if (a1 == "-filename")
+               ArchiveFilename(filePaths);
+            else if (a1 == "-filedlg")
+               ArchiveFileDlg(filePaths);
+            else if (a1 == "-dirname")
+               ArchiveDirname(filePaths);
          }
-         // 파라미터가 유효한지 확인
-         if (CheckCommandParamValid(args) == false) {
-            string msg = string.Empty;
-            MessageBox.Show(msg);
-            return;
-         }
       }
 
-      private static bool CheckCommandFormatCorrect(string[] args) {
-         return true;
-      }
-
-      private static bool CheckCommandParamValid(string[] args) {
-         return true;
-      }
-
+      // 여기에 풀기 -x -here "aaa.sip"
+      // 각각 여기에 풀기 -x -here "aaa.sip" "bbb.sip"
       private static void ExtractHere(string[] zipFilePaths) {
 
       }
 
+      // 알아서 풀기 -x -auto "aaa.sip"
+      // 각각 알아서 풀기 -x -auto "aaa.sip" "bbb.sip"
       private static void ExtractAuto(string[] zipFilePaths) {
 
       }
 
+      // 파일명 폴더에 풀기 -x -filenamedir "aaa.sip"
+      // 각각 파일명 폴더에 풀기 -x -filenamedir "aaa.sip" "bbb.sip"
       private static void ExtractFilenameDir(string[] zipFilePaths) {
 
       }
 
+      // 반디집으로 풀기 -x -dirdlg "aaa.sip"
+      // 반디집으로 풀기 -x -dirdlg "aaa.sip" "bbb.sip"
       private static void ExtractDirDlg(string[] zipFilePaths) {
 
       }
 
-      private static void ExtractOpen(string zipFilePath) {
-
-      }
-
+      // 파일명.zip으로 압축하기 -a -filename "aaa.txt"
+      // 각각 파일명.zip으로 압축하기 -a -filename "aaa.sip" "bbb.sip"
+      // 각각 파일명.zip으로 압축하기 -a -filename "aaa.txt" "bbb.txt"
       private static void ArchiveFilename(string[] filePaths) {
 
       }
 
+      // 반디집으로 압축하기 -a -filedlg "aaa.txt"
+      // 반디집으로 압축하기 -a -filedlg "aaa.sip" "bbb.sip"
+      // 반디집으로 압축하기 -a -filedlg "aaa.txt" "bbb.txt"
       private static void ArchiveFileDlg(string[] filePaths) {
 
       }
 
+      // 폴더명.zip으로 압축하기 -a -dirname "aaa.sip" "bbb.sip"
+      // 폴더명.zip으로 압축하기 -a -dirname "aaa.txt" "bbb.txt"
       private static void ArchiveDirname(string[] filePaths) {
 
       }

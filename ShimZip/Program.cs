@@ -16,11 +16,11 @@ namespace ShimZip {
          if (args.Length == 0) {
             Application.Run(new FormMain());
          } else if (args[0] == "-o") {
-            Application.Run(new FormMain(args));
+            if (args.Length >= 2)
+               Application.Run(new FormMain(args[1]));
          } else if (args[0] == "-x" || args[0] == "-a") {
-            CommandLine.Run(args);
-         } else {
-
+            if (args.Length >= 2)
+               CommandLine.Run(args);
          }
       }
    }

@@ -16,9 +16,8 @@ namespace ShimZip {
          InitializeComponent();
       }
 
-      public FormMain(string[] args) {
+      public FormMain(string zipFilePath) {
          InitializeComponent();
-         string zipFilePath = args[1];
          this.OpenZipFile(zipFilePath);
       }
 
