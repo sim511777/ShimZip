@@ -133,6 +133,7 @@
          this.lvwFiles.TabIndex = 3;
          this.lvwFiles.UseCompatibleStateImageBehavior = false;
          this.lvwFiles.View = System.Windows.Forms.View.Details;
+         this.lvwFiles.DoubleClick += new System.EventHandler(this.lvwFiles_DoubleClick);
          // 
          // columnHeader1
          // 

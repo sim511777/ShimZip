@@ -97,11 +97,15 @@ namespace ShimZip {
       }
 
       private void trvZip_AfterSelect(object sender, TreeViewEventArgs e) {
+         DirData dirData = e.Node.Tag as DirData;
+         this.UpdateLvw(dirData);
+      }
+
+      private void UpdateLvw(DirData dirData) {
          CultureInfo culture = CultureInfo.CreateSpecificCulture("ko-KR");
          string format = "g";
          this.lvwFiles.BeginUpdate();
          this.lvwFiles.Items.Clear();
-         DirData dirData = e.Node.Tag as DirData;
          foreach (var subDirData in dirData.dirDatas) {
             string[] subItems = new string[] { subDirData.name, "[DIR]", string.Empty, subDirData.creationTimeUtc.ToLocalTime().ToString(format, culture), subDirData.lastAccessTimeUtc.ToLocalTime().ToString(format, culture), subDirData.lastWriteTimeUtc.ToLocalTime().ToString(format, culture) };
             var item = this.lvwFiles.Items.Add(new ListViewItem(subItems));
@@ -153,6 +157,17 @@ namespace ShimZip {
          var dt = DateTime.Now - t1;
 
          MessageBox.Show($"{decfileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
+      }
+
+      private void lvwFiles_DoubleClick(object sender, EventArgs e) {
+         var selItems = this.lvwFiles.SelectedItems;
+         if (selItems.Count != 1)
+            return;
+         var dirData = selItems[0].Tag as DirData;
+         if (dirData == null)
+            return;
+
+         this.UpdateLvw(dirData);
       }
    }
 }
