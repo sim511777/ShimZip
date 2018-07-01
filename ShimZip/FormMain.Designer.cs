@@ -88,13 +88,13 @@
          // dlgSave
          // 
          this.dlgSave.DefaultExt = "sip";
-         this.dlgSave.Filter = "Shim Zip FIile|*.sip";
+         this.dlgSave.Filter = "Shim Zip FIile|*.sip|Quake Pak FIile|*.Pak";
          // 
          // dlgOpen
          // 
          this.dlgOpen.DefaultExt = "sip";
          this.dlgOpen.FileName = "Noname.sip";
-         this.dlgOpen.Filter = "Shim Zip FIile|*.sip";
+         this.dlgOpen.Filter = "Supported FIile|*.sip;*.pak|Shim Zip FIile|*.sip|Quake Pak FIile|*.Pak";
          // 
          // trvZip
          // 

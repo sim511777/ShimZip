@@ -47,7 +47,13 @@ namespace ShimZip {
          this.zipFilePath = zipFilePath;
          int fileCnt = 0;
          long totalByte = 0;
-         var zipData = ShimZip.GetZipData(this.zipFilePath, ref fileCnt, ref totalByte);
+         
+         string ext = Path.GetExtension(zipFilePath).ToLower();
+         ZipData zipData = null;
+         if (ext == ".sip")
+            zipData = ShimZip.GetZipData(this.zipFilePath, ref fileCnt, ref totalByte);
+         else if (ext == ".pak")
+            zipData = QuakePak.GetZipData(this.zipFilePath, ref fileCnt, ref totalByte);
 
          string zipFileName = Path.GetFileName(zipFilePath);
          this.ZipToTree(zipData, Path.GetFileName(zipFilePath));
@@ -71,10 +77,14 @@ namespace ShimZip {
          var t1 = DateTime.Now;
          int fileCnt = 0;
          long totalByte = 0;
-         var zipData = ShimZip.MakeZipData(files, dirs, ref fileCnt, ref totalByte);
-         int encFileCnt = ShimZip.ZipFile(zipData, zipFilePath);
-         var dt = DateTime.Now - t1;
+         var zipData = ZipData.MakeZipData(files, dirs, ref fileCnt, ref totalByte);
          
+         int encFileCnt = 0;
+         if (Path.GetExtension(zipFilePath).ToLower() == ".sip") {
+            encFileCnt = ShimZip.ZipFile(zipData, zipFilePath);
+         } else {
+         }
+         var dt = DateTime.Now - t1;         
          MessageBox.Show($"{encFileCnt} files ziped to {zipFilePath}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
       }
 
@@ -119,7 +129,7 @@ namespace ShimZip {
          string unzipDir = this.dlgFolder.SelectedPath;
 
          var t1 = DateTime.Now;
-         int decfileCnt = ShimZip.UnzipFile(dirData.fileDatas, dirData.dirDatas, this.zipFilePath, unzipDir);
+         int decfileCnt = ZipData.UnzipFile(dirData.fileDatas, dirData.dirDatas, this.zipFilePath, unzipDir);
          var dt = DateTime.Now - t1;
 
          MessageBox.Show($"{decfileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
@@ -138,7 +148,7 @@ namespace ShimZip {
 
          string unzipDir = this.dlgFolder.SelectedPath;
 
-         int decfileCnt = ShimZip.UnzipFile(fileDatas, dirDatas, this.zipFilePath, unzipDir);
+         int decfileCnt = ZipData.UnzipFile(fileDatas, dirDatas, this.zipFilePath, unzipDir);
          var t1 = DateTime.Now;
          var dt = DateTime.Now - t1;
 
