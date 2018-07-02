@@ -139,7 +139,7 @@ namespace ShimZip {
          MessageBox.Show($"{decfileCnt} files unziped to {unzipDir}.\r\nelapse time : {dt.TotalSeconds:0.0}s");
       }
 
-      private void exractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
+      private void extractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
          var selItems = this.lvwFiles.SelectedItems.Cast<ListViewItem>();
          if (selItems.Count() == 0)
             return;
@@ -168,6 +168,26 @@ namespace ShimZip {
             return;
 
          this.UpdateLvw(dirData);
+      }
+
+      private void popupMenu_Opening(object sender, CancelEventArgs e) {
+         var selItems = this.lvwFiles.SelectedItems;
+         if (selItems.Count == 0) {
+            this.extractSelectedToolStripMenuItem1.Visible = false;
+            this.viewMapToolStripMenuItem.Visible = false;
+            this.noImteSelectedToolStripMenuItem.Visible = true;
+            return;
+         }
+         this.extractSelectedToolStripMenuItem1.Visible = true;
+         this.noImteSelectedToolStripMenuItem.Visible = false;
+         if (selItems.Count == 1 && selItems[0].Tag is FileData && (selItems[0].Tag as FileData).name.ToLower().EndsWith(".bsp"))
+            this.viewMapToolStripMenuItem.Visible = true;
+         else
+            this.viewMapToolStripMenuItem.Visible = false;
+      }
+
+      private void viewMapToolStripMenuItem_Click(object sender, EventArgs e) {
+         var fileData = this.lvwFiles.SelectedItems.Cast<ListViewItem>().FirstOrDefault().Tag as FileData;
       }
    }
 }

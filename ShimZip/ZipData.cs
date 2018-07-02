@@ -96,6 +96,11 @@ namespace ShimZip {
          } catch {
          }
       }
+
+      private byte[] DecodeFile(BinaryReader br, FileData fileData) {
+         br.BaseStream.Seek(fileData.offset, SeekOrigin.Begin);
+         return br.ReadBytes((int)fileData.length);
+      }
    }
 
    public class FileData {

@@ -23,11 +23,12 @@
       /// 이 메서드의 내용을 코드 편집기로 수정하지 마세요.
       /// </summary>
       private void InitializeComponent() {
+         this.components = new System.ComponentModel.Container();
          this.menuStrip1 = new System.Windows.Forms.MenuStrip();
          this.zipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
          this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
          this.extractAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-         this.exractSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+         this.extractSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
          this.dlgFolder = new System.Windows.Forms.FolderBrowserDialog();
          this.dlgSave = new System.Windows.Forms.SaveFileDialog();
          this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
@@ -40,8 +41,13 @@
          this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+         this.popupMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+         this.viewMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+         this.noImteSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
          this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+         this.extractSelectedToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
          this.menuStrip1.SuspendLayout();
+         this.popupMenu.SuspendLayout();
          this.SuspendLayout();
          // 
          // menuStrip1
@@ -50,7 +56,7 @@
             this.zipToolStripMenuItem,
             this.openToolStripMenuItem,
             this.extractAllToolStripMenuItem,
-            this.exractSelectedToolStripMenuItem});
+            this.extractSelectedToolStripMenuItem});
          this.menuStrip1.Location = new System.Drawing.Point(0, 0);
          this.menuStrip1.Name = "menuStrip1";
          this.menuStrip1.Size = new System.Drawing.Size(1205, 24);
@@ -78,12 +84,12 @@
          this.extractAllToolStripMenuItem.Text = "Extract All";
          this.extractAllToolStripMenuItem.Click += new System.EventHandler(this.extractAllToolStripMenuItem_Click);
          // 
-         // exractSelectedToolStripMenuItem
+         // extractSelectedToolStripMenuItem
          // 
-         this.exractSelectedToolStripMenuItem.Name = "exractSelectedToolStripMenuItem";
-         this.exractSelectedToolStripMenuItem.Size = new System.Drawing.Size(100, 20);
-         this.exractSelectedToolStripMenuItem.Text = "Exract Selected";
-         this.exractSelectedToolStripMenuItem.Click += new System.EventHandler(this.exractSelectedToolStripMenuItem_Click);
+         this.extractSelectedToolStripMenuItem.Name = "extractSelectedToolStripMenuItem";
+         this.extractSelectedToolStripMenuItem.Size = new System.Drawing.Size(104, 20);
+         this.extractSelectedToolStripMenuItem.Text = "Extract Selected";
+         this.extractSelectedToolStripMenuItem.Click += new System.EventHandler(this.extractSelectedToolStripMenuItem_Click);
          // 
          // dlgSave
          // 
@@ -123,6 +129,7 @@
             this.columnHeader5,
             this.columnHeader6,
             this.columnHeader7});
+         this.lvwFiles.ContextMenuStrip = this.popupMenu;
          this.lvwFiles.Dock = System.Windows.Forms.DockStyle.Fill;
          this.lvwFiles.FullRowSelect = true;
          this.lvwFiles.GridLines = true;
@@ -166,6 +173,29 @@
          this.columnHeader7.Text = "last write time";
          this.columnHeader7.Width = 140;
          // 
+         // popupMenu
+         // 
+         this.popupMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.extractSelectedToolStripMenuItem1,
+            this.viewMapToolStripMenuItem,
+            this.noImteSelectedToolStripMenuItem});
+         this.popupMenu.Name = "popupMenu";
+         this.popupMenu.Size = new System.Drawing.Size(181, 92);
+         this.popupMenu.Opening += new System.ComponentModel.CancelEventHandler(this.popupMenu_Opening);
+         // 
+         // viewMapToolStripMenuItem
+         // 
+         this.viewMapToolStripMenuItem.Name = "viewMapToolStripMenuItem";
+         this.viewMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+         this.viewMapToolStripMenuItem.Text = "View Map";
+         this.viewMapToolStripMenuItem.Click += new System.EventHandler(this.viewMapToolStripMenuItem_Click);
+         // 
+         // noImteSelectedToolStripMenuItem
+         // 
+         this.noImteSelectedToolStripMenuItem.Name = "noImteSelectedToolStripMenuItem";
+         this.noImteSelectedToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+         this.noImteSelectedToolStripMenuItem.Text = "No Imte Selected";
+         // 
          // statusStrip1
          // 
          this.statusStrip1.Location = new System.Drawing.Point(0, 557);
@@ -173,6 +203,13 @@
          this.statusStrip1.Size = new System.Drawing.Size(1205, 22);
          this.statusStrip1.TabIndex = 4;
          this.statusStrip1.Text = "statusStrip1";
+         // 
+         // extractSelectedToolStripMenuItem1
+         // 
+         this.extractSelectedToolStripMenuItem1.Name = "extractSelectedToolStripMenuItem1";
+         this.extractSelectedToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+         this.extractSelectedToolStripMenuItem1.Text = "Extract Selected";
+         this.extractSelectedToolStripMenuItem1.Click += new System.EventHandler(this.extractSelectedToolStripMenuItem_Click);
          // 
          // FormMain
          // 
@@ -189,6 +226,7 @@
          this.Text = "ShimZip";
          this.menuStrip1.ResumeLayout(false);
          this.menuStrip1.PerformLayout();
+         this.popupMenu.ResumeLayout(false);
          this.ResumeLayout(false);
          this.PerformLayout();
 
@@ -210,10 +248,14 @@
       private System.Windows.Forms.ColumnHeader columnHeader3;
       private System.Windows.Forms.StatusStrip statusStrip1;
       private System.Windows.Forms.ToolStripMenuItem extractAllToolStripMenuItem;
-      private System.Windows.Forms.ToolStripMenuItem exractSelectedToolStripMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem extractSelectedToolStripMenuItem;
       private System.Windows.Forms.ColumnHeader columnHeader5;
       private System.Windows.Forms.ColumnHeader columnHeader6;
       private System.Windows.Forms.ColumnHeader columnHeader7;
+      private System.Windows.Forms.ContextMenuStrip popupMenu;
+      private System.Windows.Forms.ToolStripMenuItem viewMapToolStripMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem noImteSelectedToolStripMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem extractSelectedToolStripMenuItem1;
    }
 }
 
